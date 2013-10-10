@@ -1,5 +1,10 @@
 package es.deusto.ingenieria.ssdd.chat.client.controller;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observer;
@@ -69,7 +74,43 @@ public class ChatClientController {
 		this.serverIP = ip;
 		this.serverPort = port;
 		
-		return true;
+		String message = "000 INIT " + nick;
+		
+		try (DatagramSocket udpSocket = new DatagramSocket()) {
+			InetAddress serverHost = InetAddress.getByName(serverIP);			
+			byte[] byteMsg = message.getBytes();
+			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+			udpSocket.send(request);
+			
+			byte[] buffer = new byte[1024];
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+			udpSocket.receive(reply);
+			String response = new String(reply.getData());
+			response = response.substring(0, 3);
+			if (response.equals("001")) {
+				//TODO ok
+				
+				Runnable processServer = new ClientThread(udpSocket);
+				Thread thread = new Thread(processServer);
+				thread.start();
+				return true;
+			}
+			else if (response.equals("002")) {
+				//TODO error nickname used
+			}
+			else if (response.equals("003")){
+				//TODO error nickname not allowed
+			}
+			else {
+				//TODO error ip already in use
+			}
+		} catch (SocketException e) {
+			System.err.println("# UDPClient Socket error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("# UDPClient IO error: " + e.getMessage());
+		}
+		return false;
 	}
 	
 	public boolean disconnect() {
