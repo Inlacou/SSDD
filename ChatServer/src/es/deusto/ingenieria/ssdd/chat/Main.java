@@ -11,7 +11,6 @@ public class Main {
 	
 	public static void main(String[] args) {
 		int serverPort = args.length == 0 ? Main.PORT : Integer.parseInt(args[0]);
-		int clientCount = 0;
 		
 		try (DatagramSocket udpSocket = new DatagramSocket(serverPort)) {
 			DatagramPacket request = null;
