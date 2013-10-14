@@ -37,8 +37,28 @@ public class ClientThread implements Runnable {
 				response = new String(reply.getData());
 				
 				//TODO evaluar respuesta
-				if ((response.substring(0, 3)).equals("102 103 201 202 203 ")) {
-					
+				if ((response.substring(0, 3)).equals("102")) {
+					//102 NEWUSER new_user
+				}
+				
+				else if ((response.substring(0, 3)).equals("103")) {
+					//103 LEFTUSER left_user
+				}
+				
+				else if ((response.substring(0, 3)).equals("212")) {
+					//212 SENDMSG XXX text
+				}
+				
+				else if ((response.substring(0, 3)).equals("300")) {
+					//300 LEAVECHAT
+				}
+				
+				else if ((response.substring(0, 3)).equals("666")) {
+					//666 ERROR NOT LOGGED IN
+				}
+				
+				else if ((response.substring(0, 3)).equals("999")) {
+					//999 KEEPALIVE
 				}
 				
 			} catch (SocketException e) {
