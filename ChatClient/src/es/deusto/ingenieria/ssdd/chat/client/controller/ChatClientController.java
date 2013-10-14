@@ -67,7 +67,7 @@ public class ChatClientController {
 	
 	public boolean connect(String ip, int port, String nick) {
 		
-		//ENTER YOUR CODE TO CONNECT
+		//TODO ENTER YOUR CODE TO CONNECT
 		
 		this.connectedUser = new User();
 		this.connectedUser.setNick(nick);
@@ -90,7 +90,7 @@ public class ChatClientController {
 			if (response.equals("001")) {
 				//TODO ok
 				
-				Runnable processServer = new ClientThread(udpSocket);
+				Runnable processServer = new ClientThread(udpSocket, serverHost, serverPort);
 				Thread thread = new Thread(processServer);
 				thread.start();
 				return true;
@@ -115,7 +115,7 @@ public class ChatClientController {
 	
 	public boolean disconnect() {
 		
-		//ENTER YOUR CODE TO DISCONNECT
+		//TODO ENTER YOUR CODE TO DISCONNECT
 		
 		this.connectedUser = null;
 		this.chatReceiver = null;
@@ -126,7 +126,7 @@ public class ChatClientController {
 	public List<String> getConnectedUsers() {
 		List<String> connectedUsers = new ArrayList<>();
 		
-		//ENTER YOUR CODE TO OBTAIN THE LIST OF CONNECTED USERS
+		//TODO ENTER YOUR CODE TO OBTAIN THE LIST OF CONNECTED USERS
 		connectedUsers.add("Default");
 		
 		return connectedUsers;
@@ -134,14 +134,14 @@ public class ChatClientController {
 	
 	public boolean sendMessage(String message) {
 		
-		//ENTER YOUR CODE TO SEND A MESSAGE
+		//TODO ENTER YOUR CODE TO SEND A MESSAGE
 		
 		return true;
 	}
 	
 	public void receiveMessage() {
 		
-		//ENTER YOUR CODE TO RECEIVE A MESSAGE
+		//TODO ENTER YOUR CODE TO RECEIVE A MESSAGE
 		
 		String message = "Received message";		
 		
@@ -151,7 +151,7 @@ public class ChatClientController {
 	
 	public boolean sendChatRequest(String to) {
 		
-		//ENTER YOUR CODE TO SEND A CHAT REQUEST
+		//TODO ENTER YOUR CODE TO SEND A CHAT REQUEST
 		
 		this.chatReceiver = new User();
 		this.chatReceiver.setNick(to);
@@ -161,7 +161,7 @@ public class ChatClientController {
 	
 	public void receiveChatRequest() {
 		
-		//ENTER YOUR CODE TO RECEIVE A CHAT REQUEST
+		//TODO ENTER YOUR CODE TO RECEIVE A CHAT REQUEST
 		
 		String message = "Chat request details";
 		
@@ -171,21 +171,21 @@ public class ChatClientController {
 	
 	public boolean acceptChatRequest() {
 		
-		//ENTER YOUR CODE TO ACCEPT A CHAT REQUEST
+		//TODO ENTER YOUR CODE TO ACCEPT A CHAT REQUEST
 		
 		return true;
 	}
 	
 	public boolean refuseChatRequest() {
 		
-		//ENTER YOUR CODE TO REFUSE A CHAT REQUEST
+		//TODO ENTER YOUR CODE TO REFUSE A CHAT REQUEST
 		
 		return true;
 	}	
 	
 	public boolean sendChatClosure() {
 		
-		//ENTER YOUR CODE TO SEND A CHAT CLOSURE
+		//TODO ENTER YOUR CODE TO SEND A CHAT CLOSURE
 		
 		this.chatReceiver = null;
 		
@@ -194,7 +194,7 @@ public class ChatClientController {
 	
 	public void receiveChatClosure() {
 		
-		//ENTER YOUR CODE TO RECEIVE A CHAT REQUEST
+		//TODO ENTER YOUR CODE TO RECEIVE A CHAT REQUEST
 		
 		String message = "Chat request details";
 		
