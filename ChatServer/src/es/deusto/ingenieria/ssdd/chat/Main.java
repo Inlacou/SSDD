@@ -1,6 +1,5 @@
 package es.deusto.ingenieria.ssdd.chat;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
@@ -18,8 +17,9 @@ public class Main {
 			byte[] buffer = new byte[1024];
 			
 			System.out.println(" - Waiting for connections '" + 
-			                       udpSocket.getLocalAddress().getHostAddress() + ":" + 
-					               serverPort + "' ...");
+                    udpSocket.getLocalAddress().getHostAddress() + ":" + 
+		               serverPort + "' ...");
+			
 			Handler h = new Handler(request, reply, buffer, udpSocket);
 			h.run();
 			

@@ -1,6 +1,9 @@
 package es.deusto.ingenieria.ssdd.chat;
 
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import es.deusto.ingenieria.ssdd.chat.data.Mensaje;
 import es.deusto.ingenieria.ssdd.chat.data.User;
@@ -18,6 +21,19 @@ public class Brain {
 		handler = h;
 		users = new ArrayList<User>();
 		KeepAlive ka = new KeepAlive(500, users, h.udpSocket);
+		ka.run();
+		
+		System.out.println("KeepAlive service running");
+		
+		/*
+		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+		exec.scheduleAtFixedRate(new Runnable() {
+		  @Override
+		  public void run() {
+			  
+		  }
+		}, 0, 5, TimeUnit.SECONDS);
+		*/
 	}
 	
 	public void receivedMessage(String string, String ip){

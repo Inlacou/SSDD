@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import es.deusto.ingenieria.ssdd.chat.data.User;
 
-public class KeepAlive {
+public class KeepAlive extends Thread {
 
 	private int ms;
 	private ArrayList<User> users;
@@ -18,21 +18,24 @@ public class KeepAlive {
 	
 	public KeepAlive(int ms, ArrayList<User> users, DatagramSocket udpSocket){
 		this.ms = ms;
+		this.users = users;
 		this.udpSocket = udpSocket;
 	}
 	
+	@Override
 	public void run(){
 		while(true){
 			try {
 				int numUsers = users.size();
-				for (int i = 0; i <numUsers; i++) {
+				for (int i = 0; i < numUsers; i++) {
 					sendKeepAlive(users.get(i));
 				}
-				wait(ms);
-			} catch (InterruptedException e) {
-				System.out.println(e.getMessage());
+				Thread.sleep(ms);
 			} catch (IOException e) {
 				System.out.println(e.getMessage());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

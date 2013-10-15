@@ -32,6 +32,16 @@ public class test {
 			udpSocket.receive(reply);			
 			System.out.println(" - Received a reply from '" + reply.getAddress().getHostAddress() + ":" + reply.getPort() + 
 					           "' -> "+ new String(reply.getData()));
+			
+			reply = new DatagramPacket(buffer, buffer.length);
+			udpSocket.receive(reply);			
+			System.out.println(" - Received a reply from '" + reply.getAddress().getHostAddress() + ":" + reply.getPort() + 
+					           "' -> "+ new String(reply.getData()));
+			
+			reply = new DatagramPacket(buffer, buffer.length);
+			udpSocket.receive(reply);			
+			System.out.println(" - Received a reply from '" + reply.getAddress().getHostAddress() + ":" + reply.getPort() + 
+					           "' -> "+ new String(reply.getData()));
 		} catch (SocketException e) {
 			System.err.println("# test Socket error: " + e.getMessage());
 			e.printStackTrace();
