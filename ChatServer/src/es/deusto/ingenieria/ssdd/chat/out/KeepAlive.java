@@ -3,20 +3,22 @@ package es.deusto.ingenieria.ssdd.chat.out;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 import es.deusto.ingenieria.ssdd.chat.data.User;
 
-public class keepAlive {
+public class KeepAlive {
 
 	private int ms;
 	private ArrayList<User> users;
-	DatagramPacket request, reply;
+	DatagramPacket request;
 	DatagramSocket udpSocket;
 	byte[] buffer;
 	
-	public keepAlive(int ms, ArrayList<User> users){
+	public KeepAlive(int ms, ArrayList<User> users, DatagramSocket udpSocket){
 		this.ms = ms;
+		this.udpSocket = udpSocket;
 	}
 	
 	public void run(){
@@ -24,7 +26,7 @@ public class keepAlive {
 			try {
 				int numUsers = users.size();
 				for (int i = 0; i <numUsers; i++) {
-					sendMessage(users.get(i));
+					sendKeepAlive(users.get(i));
 				}
 				wait(ms);
 			} catch (InterruptedException e) {
@@ -35,8 +37,8 @@ public class keepAlive {
 		}
 	}
 	
-	public void sendMessage(User user) throws IOException{
-		reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
+	public void sendKeepAlive(User user) throws IOException{
+		DatagramPacket reply = new DatagramPacket("999 KEEPALIVE".getBytes(), "999 KEEPALIVE".getBytes().length, InetAddress.getByName(user.getIP()), Integer.parseInt(user.getPort()));
 		udpSocket.send(reply);
 	}
 	

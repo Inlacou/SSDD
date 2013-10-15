@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import es.deusto.ingenieria.ssdd.chat.data.Mensaje;
 import es.deusto.ingenieria.ssdd.chat.data.User;
+import es.deusto.ingenieria.ssdd.chat.out.KeepAlive;
 import es.deusto.ingenieria.ssdd.exceptions.IPAlreadyInUseException;
 import es.deusto.ingenieria.ssdd.exceptions.NickNameAlreadyInUseException;
 import es.deusto.ingenieria.ssdd.exceptions.NickNameNotAllowedException;
@@ -16,6 +17,7 @@ public class Brain {
 	public Brain(Handler h){
 		handler = h;
 		users = new ArrayList<User>();
+		KeepAlive ka = new KeepAlive(500, users, h.udpSocket);
 	}
 	
 	public void receivedMessage(String string, String ip){
