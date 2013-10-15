@@ -80,17 +80,17 @@ public class ChatClientController {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
-			udpSocket.send(request);
+			udpSocket.send(request);System.out.println("Enviada request al servidor");
 			
 			byte[] buffer = new byte[1024];
-			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-			udpSocket.receive(reply);
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);System.out.println("esperando respuesta");
+			udpSocket.receive(reply);System.out.println("recibida respuesta del servidor");
 			String response = new String(reply.getData());
 			response = response.substring(0, 3);
 			if (response.equals("001")) {
 				//TODO ok
-				
-				Runnable processServer = new ClientThread(udpSocket, serverHost, serverPort);
+				System.out.println("recibido ok del servidor");
+				Runnable processServer = new ClientThread(udpSocket, serverHost, serverPort, this);
 				Thread thread = new Thread(processServer);
 				thread.start();
 				return true;
@@ -200,5 +200,15 @@ public class ChatClientController {
 		
 		//Notify the chat request details to the GUI
 		this.observable.notifyObservers(message);
+	}
+	
+	public void userConnected(String userNick) {
+		
+		this.observable.notifyObservers("102 NEWUSER " + userNick);
+	}
+	
+	public void userDisconnected(String userNick) {
+		
+		this.observable.notifyObservers("103 LEFTUSER " + userNick);
 	}
 }

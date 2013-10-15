@@ -53,6 +53,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 	private JTextArea textAreaSendMsg;
 	private JButton btnSendMsg;
 	private SimpleDateFormat textFormatter = new SimpleDateFormat("HH:mm:ss");
+	private DefaultListModel<String> listModel;
 	
 	private ChatClientController controller;	
 
@@ -195,6 +196,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 	}
 	
 	private void btnConnectClick() {
+		
 		if (!this.controller.isConnected()) {
 			if (this.txtFieldServerIP.getText().trim().isEmpty() ||
 				this.txtFieldServerIP.getText().trim().isEmpty() ||
@@ -213,7 +215,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				List<String> connectedUsers = this.controller.getConnectedUsers();
 				
 				if (!connectedUsers.isEmpty()) {
-					DefaultListModel<String> listModel = new DefaultListModel<>();
+					listModel = new DefaultListModel<>();
 					
 					for (String user : connectedUsers) {
 						listModel.addElement(user);
@@ -330,7 +332,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 	@Override
 	public void update(Observable observable, Object object) {
 		
-		//Update this method to process the request received from other users
+		//TODO Update this method to process the request received from other users
 		
 		if (this.controller.isConnected()) {			
 			if (object.getClass().getName().equals(Message.class.getName())) {
@@ -339,6 +341,18 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				if (newMessage.getTo().getNick() == this.controller.getConnectedUser()) {
 					this.appendReceivedMessageToHistory(newMessage.getText(), newMessage.getFrom().getNick(), newMessage.getTimestamp());
 				}
+			}
+			
+			else if (object.getClass().getName().equals(String.class.getName())) {
+				String newString = (String) object;
+				
+				if ((newString.substring(0, 3)).equals("102")) {
+					listModel.addElement(newString.substring(12, newString.length()));
+				}
+				else if ((newString.substring(0, 3)).equals("103")) {
+					listModel.addElement(newString.substring(13, newString.length()));
+				}
+				this.listUsers.setModel(listModel);
 			}
 		}
 	}	

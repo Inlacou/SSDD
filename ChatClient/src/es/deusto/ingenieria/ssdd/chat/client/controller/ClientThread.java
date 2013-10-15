@@ -16,11 +16,13 @@ public class ClientThread implements Runnable {
 	private String response;
 	private DatagramPacket request;
 	private DatagramPacket reply;
+	private ChatClientController controller;
 	
-	public ClientThread(DatagramSocket udpSocket, InetAddress serverHost, int serverPort) {
+	public ClientThread(DatagramSocket udpSocket, InetAddress serverHost, int serverPort, ChatClientController controller) {
 		this.udpSocket = udpSocket;
 		this.serverHost = serverHost;
 		this.serverPort = serverPort;
+		this.controller = controller;
 		this.stop = false;
 		byte[] buffer = new byte[1024];
 		this.reply = new DatagramPacket(buffer, buffer.length);
@@ -39,14 +41,18 @@ public class ClientThread implements Runnable {
 				//TODO evaluar respuesta
 				if ((response.substring(0, 3)).equals("102")) {
 					//102 NEWUSER new_user
+					String nick = response.substring(12, response.length());
+					controller.userConnected(nick);
 				}
 				
 				else if ((response.substring(0, 3)).equals("103")) {
 					//103 LEFTUSER left_user
+					String nick = response.substring(13, response.length());
+					controller.userDisconnected(nick);
 				}
 				
 				else if ((response.substring(0, 3)).equals("212")) {
-					//212 SENDMSG XXX text
+					//212 SENDMSG xxx text
 				}
 				
 				else if ((response.substring(0, 3)).equals("300")) {
