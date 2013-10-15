@@ -9,7 +9,7 @@ import java.net.SocketException;
 public class test {
 	private static final String DEFAULT_IP = "0.0.0.0";
 	private static final int DEFAULT_PORT = 6789;
-	private static final String DEFAULT_MESSAGE = "000 INIT John Smith";	
+	private static final String DEFAULT_MESSAGE = "000 INIT John Smith2";	
 	
 	public static void main(String args[]) {
 		//args[0] = Server IP

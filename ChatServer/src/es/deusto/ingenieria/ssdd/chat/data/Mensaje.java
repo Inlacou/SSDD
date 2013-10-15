@@ -16,8 +16,12 @@ public class Mensaje {
 		while (st.hasMoreElements()) {
 			text += st.nextToken() + " ";
 		}
+		text = text.trim();
 	}
 	
+	public Mensaje() {
+	}
+
 	public int getCode() {
 		return code;
 	}
@@ -34,7 +38,7 @@ public class Mensaje {
 		return text;
 	}
 	public void setText(String text) {
-		this.text = text;
+		this.text = text.trim();
 	}
 	
 	@Override
@@ -49,6 +53,15 @@ public class Mensaje {
 		
 		System.out.println(m1);
 		
+	}
+
+	public boolean addText(String string) {
+		String auxText = text+string;
+		if((Integer.toString(code)+" "+messageType+" "+auxText).getBytes().length>1024){
+			return false;
+		}
+		text = auxText;
+		return true;
 	}
 	
 }

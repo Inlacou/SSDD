@@ -19,6 +19,34 @@ public class Main {
 			System.out.println(" - Waiting for connections '" + 
                     udpSocket.getLocalAddress().getHostAddress() + ":" + 
 		               serverPort + "' ...");
+			/*
+			String a = "John Smith:>:";
+			String b = "John Smith"+":>:";
+			String c = "John Smith";
+			c = c+":>:";
+			String d = ":<:" + "John Smith:>:";
+			String e = ":<:" + "John Smith"+":>:";
+			String f = ":<:" + "John Smith";
+			f = f+":>:";
+			System.out.println(a);
+			System.out.println(b);
+			System.out.println(c);
+			System.out.println(d);
+			System.out.println(e);
+			System.out.println(f);
+			*/
+			
+			/*
+			String text = "100" + " " + "LIST"+ " " + "000" + " " + ":<:" + "John Smith" + ":>:";
+			int i = 0;
+			
+			while(text.getBytes().length<1024){
+				System.out.println(text);
+				System.out.println(i);
+				text += ":<:" + "John Smith" + ":>:";
+				i++;
+			}
+			*/
 			
 			Handler h = new Handler(request, reply, buffer, udpSocket);
 			h.run();

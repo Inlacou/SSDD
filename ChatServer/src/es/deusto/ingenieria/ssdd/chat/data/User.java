@@ -34,6 +34,11 @@ public class User {
 	public void setPort(int port){
 		this.port = port;
 	}
+	
+	@Override
+	public String toString() {
+		return "User.toString() | Nickname: "+nick+" IP: "+ip+" Port: "+port;
+	}
 		
 	public boolean equals(Object obj) {
 		if (obj != null && obj.getClass().equals(this.getClass())) {			

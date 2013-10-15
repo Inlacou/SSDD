@@ -37,10 +37,6 @@ public class Handler extends Thread {
 			                   "' -> " + new String(request.getData()));
 			brain.receivedMessage(new String(request.getData()), request.getAddress().getHostAddress(), request.getPort());
 			
-			
-			//reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
-			//udpSocket.send(reply);				
-		
 			} catch (IOException e) {
 				System.err.println("# UDPServer IO error: " + e.getMessage());
 			}
