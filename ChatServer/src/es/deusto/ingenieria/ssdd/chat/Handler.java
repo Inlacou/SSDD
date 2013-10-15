@@ -10,6 +10,7 @@ public class Handler extends Thread {
 	DatagramPacket request, reply;
 	DatagramSocket udpSocket;
 	byte[] buffer;
+	Brain brain;
 	
 	
 	public Handler(DatagramPacket request, DatagramPacket reply, byte[] buffer, DatagramSocket udpSocket) {
@@ -17,6 +18,7 @@ public class Handler extends Thread {
 		this.reply = reply;
 		this.buffer = buffer;
 		this.udpSocket = udpSocket;
+		this.brain = new Brain();
 	}
 
 	public void stop(boolean stop){
@@ -30,9 +32,11 @@ public class Handler extends Thread {
 			udpSocket.receive(request);				
 			System.out.println(" - Received a request from '" + request.getAddress().getHostAddress() + ":" + request.getPort() + 
 			                   "' -> " + new String(request.getData()));
+			brain.receivedMessage(new String(request.getData()));
 			
-			reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
-			udpSocket.send(reply);				
+			
+			//reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
+			//udpSocket.send(reply);				
 		
 			} catch (IOException e) {
 				System.err.println("# UDPServer IO error: " + e.getMessage());
