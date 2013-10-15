@@ -38,7 +38,7 @@ public class Mensaje {
 		return text;
 	}
 	public void setText(String text) {
-		this.text = text.trim();
+		this.text = text;
 	}
 	
 	@Override
