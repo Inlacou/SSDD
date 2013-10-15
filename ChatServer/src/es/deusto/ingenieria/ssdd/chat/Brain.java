@@ -20,10 +20,8 @@ public class Brain {
 	public Brain(Handler h){
 		handler = h;
 		users = new ArrayList<User>();
-		KeepAlive ka = new KeepAlive(500, users, h.udpSocket);
-		ka.run();
-		
-		System.out.println("KeepAlive service running");
+		KeepAlive ka = new KeepAlive(5000, users, h.udpSocket);
+		//ka.start();
 		
 		/*
 		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
@@ -36,19 +34,19 @@ public class Brain {
 		*/
 	}
 	
-	public void receivedMessage(String string, String ip){
+	public void receivedMessage(String string, String ip, int port){
 		Mensaje m = new Mensaje(string);
 		switch (m.getCode()) {
 		case 0:
 			try {
-				addUser(m.getText(), ip);
-				sendMessage("001 INIT OK", ip);
+				addUser(m.getText(), ip, port);
+				sendMessage("001 INIT OK", ip, port);
 			} catch (IPAlreadyInUseException e) {
-				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip);
+				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip, port);
 			} catch (NickNameAlreadyInUseException e) {
-				sendMessage("002 INIT ERROR NICKNAME USED", ip);
+				sendMessage("002 INIT ERROR NICKNAME USED", ip, port);
 			} catch (NickNameNotAllowedException e) {
-				sendMessage("003 INIT ERROR NICKNAME NOT ALLOWED", ip);
+				sendMessage("003 INIT ERROR NICKNAME NOT ALLOWED", ip, port);
 			}
 			break;
 		case 100:
@@ -81,11 +79,11 @@ public class Brain {
 		}
 	}
 	
-	public void sendMessage(String message, String ip){
-		handler.sendMessage(message, ip);
+	public void sendMessage(String message, String ip, int port){
+		handler.sendMessage(message, ip, port);
 	}
 	
-	public void addUser(String nick, String ip) throws IPAlreadyInUseException, NickNameAlreadyInUseException, NickNameNotAllowedException{
+	public void addUser(String nick, String ip, int port) throws IPAlreadyInUseException, NickNameAlreadyInUseException, NickNameNotAllowedException{
 		User auxUser;
 		int numeroUsuarios = users.size();
 		for (int i = 0; i < numeroUsuarios; i++) {
@@ -98,7 +96,7 @@ public class Brain {
 				throw new NickNameNotAllowedException();
 			}
 		}
-		users.add(new User(nick, ip));
+		users.add(new User(nick, ip, port));
 	}
 	
 }

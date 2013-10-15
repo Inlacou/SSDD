@@ -24,6 +24,7 @@ public class KeepAlive extends Thread {
 	
 	@Override
 	public void run(){
+		System.out.println("KeepAlive service started");
 		while(true){
 			try {
 				int numUsers = users.size();
@@ -41,7 +42,7 @@ public class KeepAlive extends Thread {
 	}
 	
 	public void sendKeepAlive(User user) throws IOException{
-		DatagramPacket reply = new DatagramPacket("999 KEEPALIVE".getBytes(), "999 KEEPALIVE".getBytes().length, InetAddress.getByName(user.getIP()), Integer.parseInt(user.getPort()));
+		DatagramPacket reply = new DatagramPacket("999 KEEPALIVE".getBytes(), "999 KEEPALIVE".getBytes().length, InetAddress.getByName(user.getIP()), user.getPort());
 		udpSocket.send(reply);
 	}
 	

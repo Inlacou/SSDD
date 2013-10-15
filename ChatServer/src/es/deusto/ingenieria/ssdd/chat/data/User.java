@@ -3,11 +3,12 @@ package es.deusto.ingenieria.ssdd.chat.data;
 public class User {	
 	private String nick;
 	private String ip;
-	private String port;
+	private int port;
 	
-	public User(String nick, String ip){
+	public User(String nick, String ip, int port){
 		this.nick = nick;
 		this.ip = ip;
+		this.port = port;
 	}
 	
 	public String getNick() {
@@ -26,11 +27,11 @@ public class User {
 		this.ip = ip;
 	}
 	
-	public String getPort(){
+	public int getPort(){
 		return port;
 	}
 	
-	public void setPort(String port){
+	public void setPort(int port){
 		this.port = port;
 	}
 		
