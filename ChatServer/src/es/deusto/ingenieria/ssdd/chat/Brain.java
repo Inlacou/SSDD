@@ -10,9 +10,11 @@ import es.deusto.ingenieria.ssdd.exceptions.NickNameNotAllowedException;
 
 public class Brain {
 
+	Handler handler;
 	ArrayList<User> users;
 	
-	public Brain(){
+	public Brain(Handler h){
+		handler = h;
 		users = new ArrayList<User>();
 	}
 	
@@ -22,12 +24,13 @@ public class Brain {
 		case 0:
 			try {
 				addUser(m.getText(), ip);
+				sendMessage("001 INIT OK", ip);
 			} catch (IPAlreadyInUseException e) {
-				sendMessage("004 INIT ERROR IP ALREADY IN USE");
+				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip);
 			} catch (NickNameAlreadyInUseException e) {
-				sendMessage("002 INIT ERROR NICKNAME USED");
+				sendMessage("002 INIT ERROR NICKNAME USED", ip);
 			} catch (NickNameNotAllowedException e) {
-				sendMessage("003 INIT ERROR NICKNAME NOT ALLOWED");
+				sendMessage("003 INIT ERROR NICKNAME NOT ALLOWED", ip);
 			}
 			break;
 		case 100:
@@ -60,8 +63,8 @@ public class Brain {
 		}
 	}
 	
-	public void sendMessage(String message){
-		
+	public void sendMessage(String message, String ip){
+		handler.sendMessage(message, ip);
 	}
 	
 	public void addUser(String nick, String ip) throws IPAlreadyInUseException, NickNameAlreadyInUseException, NickNameNotAllowedException{
@@ -77,6 +80,7 @@ public class Brain {
 				throw new NickNameNotAllowedException();
 			}
 		}
+		users.add(new User(nick, ip));
 	}
 	
 }

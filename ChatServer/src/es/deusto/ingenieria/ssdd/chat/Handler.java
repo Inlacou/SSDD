@@ -3,6 +3,9 @@ package es.deusto.ingenieria.ssdd.chat;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+import es.deusto.ingenieria.ssdd.chat.data.User;
 
 public class Handler extends Thread {
 
@@ -18,7 +21,7 @@ public class Handler extends Thread {
 		this.reply = reply;
 		this.buffer = buffer;
 		this.udpSocket = udpSocket;
-		this.brain = new Brain();
+		this.brain = new Brain(this);
 	}
 
 	public void stop(boolean stop){
@@ -41,6 +44,16 @@ public class Handler extends Thread {
 			} catch (IOException e) {
 				System.err.println("# UDPServer IO error: " + e.getMessage());
 			}
+		}
+	}
+
+	public void sendMessage(String message, String ip) {
+		try {
+			reply = new DatagramPacket(message.getBytes(), message.getBytes().length, InetAddress.getByName(ip), request.getPort());
+			udpSocket.send(reply);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

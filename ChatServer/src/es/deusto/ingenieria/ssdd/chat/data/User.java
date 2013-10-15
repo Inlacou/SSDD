@@ -5,6 +5,11 @@ public class User {
 	private String ip;
 	private String port;
 	
+	public User(String nick, String ip){
+		this.nick = nick;
+		this.ip = ip;
+	}
+	
 	public String getNick() {
 		return nick;
 	}
