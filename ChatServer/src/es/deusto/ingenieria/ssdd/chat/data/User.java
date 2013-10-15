@@ -3,6 +3,7 @@ package es.deusto.ingenieria.ssdd.chat.data;
 public class User {	
 	private String nick;
 	private String ip;
+	private String port;
 	
 	public String getNick() {
 		return nick;
@@ -18,6 +19,14 @@ public class User {
 	
 	public void setIP(String ip) {
 		this.ip = ip;
+	}
+	
+	public String getPort(){
+		return port;
+	}
+	
+	public void setPort(String port){
+		this.port = port;
 	}
 		
 	public boolean equals(Object obj) {

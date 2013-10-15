@@ -10,7 +10,12 @@ public class Mensaje {
 	
 	public Mensaje(String s){
 		StringTokenizer st = new StringTokenizer(s, " ");
-		
+		this.code = Integer.parseInt(st.nextToken());
+		this.messageType = st.nextToken();
+		text = "";
+		while (st.hasMoreElements()) {
+			text += st.nextToken() + " ";
+		}
 	}
 	
 	public int getCode() {
@@ -30,6 +35,20 @@ public class Mensaje {
 	}
 	public void setText(String text) {
 		this.text = text;
+	}
+	
+	@Override
+	public String toString() {
+		return "Mensaje.toString() | Code: "+code+" MessageType: "+messageType+" Text: "+text;
+	}
+	
+	public static void main(String [] args){
+		String mensaje1 = "000 INIT John Smith";
+		
+		Mensaje m1 = new Mensaje(mensaje1);
+		
+		System.out.println(m1);
+		
 	}
 	
 }

@@ -32,7 +32,7 @@ public class Handler extends Thread {
 			udpSocket.receive(request);				
 			System.out.println(" - Received a request from '" + request.getAddress().getHostAddress() + ":" + request.getPort() + 
 			                   "' -> " + new String(request.getData()));
-			brain.receivedMessage(new String(request.getData()));
+			brain.receivedMessage(new String(request.getData()), request.getAddress().getHostAddress());
 			
 			
 			//reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
