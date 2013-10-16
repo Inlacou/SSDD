@@ -80,20 +80,38 @@ public class ChatClientController {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
-			udpSocket.send(request);System.out.println("Enviada request al servidor");
+			udpSocket.send(request);
 			
 			byte[] buffer = new byte[1024];
-			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);System.out.println("esperando respuesta");
-			udpSocket.receive(reply);System.out.println("recibida respuesta del servidor");
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+			
+			udpSocket.receive(reply);
 			String response = new String(reply.getData());
+			String s = response.trim();
+			
+			udpSocket.close();
+			
 			response = response.substring(0, 3);
+			
 			if (response.equals("001")) {
-				//TODO ok
-				System.out.println("recibido ok del servidor");
-				Runnable processServer = new ClientThread(udpSocket, serverHost, serverPort, this);
-				Thread thread = new Thread(processServer);
-				thread.start();
-				return true;
+
+				s = s.substring(12);
+				int portToListen = Integer.parseInt(s);
+				
+//				try (DatagramSocket newUdpSocket = new DatagramSocket(portToListen)) {
+					
+//					Runnable processServer = new ClientThread(this, newUdpSocket);
+					Runnable processServer = new ClientThread(this, portToListen);
+					Thread thread = new Thread(processServer);
+					thread.start();
+					
+					return true;
+					
+//				} catch (SocketException e) {
+//					System.err.println("# UDPClient Socket error: " + e.getMessage());
+//					e.printStackTrace();
+//					return false;
+//				}
 			}
 			else if (response.equals("002")) {
 				//TODO error nickname used
@@ -127,7 +145,9 @@ public class ChatClientController {
 		List<String> connectedUsers = new ArrayList<>();
 		
 		//TODO ENTER YOUR CODE TO OBTAIN THE LIST OF CONNECTED USERS
-		connectedUsers.add("Default");
+		connectedUsers.add(connectedUser.getNick());
+		
+		
 		
 		return connectedUsers;
 	}

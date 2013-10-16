@@ -100,9 +100,9 @@ public class JFrameMainWindow extends JFrame implements Observer {
 		JLabel lblServerIp = new JLabel("Server IP:");		
 		JLabel lblServerPort = new JLabel("Server Port:");
 		
-		txtFieldServerIP = new JTextField();
+		txtFieldServerIP = new JTextField("127.0.0.1");//TODO
 		txtFieldServerIP.setColumns(10);
-		txtFieldServerPort = new JTextField();
+		txtFieldServerPort = new JTextField("6789");//TODO
 		txtFieldServerPort.setColumns(10);
 		
 		JLabel lblNick = new JLabel("Nick:");

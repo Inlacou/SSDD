@@ -3,77 +3,72 @@ package es.deusto.ingenieria.ssdd.chat.client.controller;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
 
 public class ClientThread implements Runnable {
-	
-	private DatagramSocket udpSocket;
-	private InetAddress serverHost;
-	private int serverPort;
+
 	private boolean stop;
 	private String message;
-	private String response;
-	private DatagramPacket request;
 	private DatagramPacket reply;
 	private ChatClientController controller;
-	
-	public ClientThread(DatagramSocket udpSocket, InetAddress serverHost, int serverPort, ChatClientController controller) {
-		this.udpSocket = udpSocket;
-		this.serverHost = serverHost;
-		this.serverPort = serverPort;
+	private byte[] buffer;
+//	private DatagramSocket udpSocket;
+	private int portToListen;
+
+//	public ClientThread(ChatClientController controller, DatagramSocket udpSocket) {
+	public ClientThread(ChatClientController controller, int portToListen) {
 		this.controller = controller;
+//		this.udpSocket = udpSocket;
+		this.portToListen = portToListen;
 		this.stop = false;
-		byte[] buffer = new byte[1024];
-		this.reply = new DatagramPacket(buffer, buffer.length);
+		this.buffer = new byte[1024];
 	}
 
 	@Override
 	public void run() {
-		
+
 		while (!stop) {
-			
-			try {
-				
+
+			try (DatagramSocket udpSocket = new DatagramSocket(portToListen)) {
+				System.out.println("EMPIEZA EL HILO");
+				reply = new DatagramPacket(buffer, buffer.length);
+				System.out.println("CLIENTE ESCUCHANDO EN EL PUERTO " + portToListen);
 				udpSocket.receive(reply);
-				response = new String(reply.getData());
+				System.out.println("MENSAJE RECIBIDO");
+				message = new String(reply.getData());
+				message = message.trim();
 				
-				//TODO evaluar respuesta
-				if ((response.substring(0, 3)).equals("102")) {
-					//102 NEWUSER new_user
-					String nick = response.substring(12, response.length());
+				if ((message.substring(0, 3)).equals("102")) {
+					//TODO 102 NEWUSER new_user
+					String nick = message.substring(12, message.length());
+					System.out.println("NUEVO USUARIO CONECTADO: "+nick);
 					controller.userConnected(nick);
 				}
-				
-				else if ((response.substring(0, 3)).equals("103")) {
-					//103 LEFTUSER left_user
-					String nick = response.substring(13, response.length());
+
+				else if ((message.substring(0, 3)).equals("103")) {
+					//TODO 103 LEFTUSER left_user
+					String nick = message.substring(13, message.length());
 					controller.userDisconnected(nick);
 				}
-				
-				else if ((response.substring(0, 3)).equals("212")) {
-					//212 SENDMSG xxx text
+
+				else if ((message.substring(0, 3)).equals("212")) {
+					//TODO 212 SENDMSG xxx text
+				}
+
+				else if ((message.substring(0, 3)).equals("300")) {
+					//TODO 300 LEAVECHAT
+				}
+
+				else if ((message.substring(0, 3)).equals("666")) {
+					//TODO 666 ERROR NOT LOGGED IN
+				}
+
+				else if ((message.substring(0, 3)).equals("999")) {
+					//TODO 999 KEEPALIVE
 				}
 				
-				else if ((response.substring(0, 3)).equals("300")) {
-					//300 LEAVECHAT
-				}
-				
-				else if ((response.substring(0, 3)).equals("666")) {
-					//666 ERROR NOT LOGGED IN
-				}
-				
-				else if ((response.substring(0, 3)).equals("999")) {
-					//999 KEEPALIVE
-				}
-				
-			} catch (SocketException e) {
-				System.err.println("# UDPClient Socket error: " + e.getMessage());
-				e.printStackTrace();
 			} catch (IOException e) {
-				System.err.println("# UDPClient IO error: " + e.getMessage());
+				stop = true;
 			}
 		}
 	}
-
 }
