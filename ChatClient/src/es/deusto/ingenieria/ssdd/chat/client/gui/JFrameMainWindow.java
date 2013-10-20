@@ -100,9 +100,9 @@ public class JFrameMainWindow extends JFrame implements Observer {
 		JLabel lblServerIp = new JLabel("Server IP:");		
 		JLabel lblServerPort = new JLabel("Server Port:");
 		
-		txtFieldServerIP = new JTextField("127.0.0.1");//TODO
+		txtFieldServerIP = new JTextField("127.0.0.1");//TODO quitar valores predeterminados
 		txtFieldServerIP.setColumns(10);
-		txtFieldServerPort = new JTextField("6789");//TODO
+		txtFieldServerPort = new JTextField("6789");//TODO quitar valores predeterminados
 		txtFieldServerPort.setColumns(10);
 		
 		JLabel lblNick = new JLabel("Nick:");
@@ -212,7 +212,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 					                    this.txtFieldNick.getText())) {
 				
 				//Obtain the list of connected Users
-				List<String> connectedUsers = this.controller.getConnectedUsers();
+				List<String> connectedUsers = this.controller.getConnectedUsers(this);
 				
 				if (!connectedUsers.isEmpty()) {
 					listModel = new DefaultListModel<>();
@@ -348,11 +348,25 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				
 				if ((newString.substring(0, 3)).equals("102")) {
 					listModel.addElement(newString.substring(12, newString.length()));
+					this.listUsers.setModel(listModel);
 				}
+				
 				else if ((newString.substring(0, 3)).equals("103")) {
 					listModel.addElement(newString.substring(13, newString.length()));
+					this.listUsers.setModel(listModel);
 				}
-				this.listUsers.setModel(listModel);
+				
+				else if (newString.equals("002")) {
+					JOptionPane.showMessageDialog(null, "Your nickname is already in use", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				else if (newString.equals("003")) {
+					JOptionPane.showMessageDialog(null, "Your nickname is not allowed", "Error", JOptionPane.ERROR_MESSAGE);					
+				}
+				
+				else if (newString.equals("004")) {
+					JOptionPane.showMessageDialog(null, "Your IP is already in use", "Error", JOptionPane.ERROR_MESSAGE);					
+				}
 			}
 		}
 	}	
