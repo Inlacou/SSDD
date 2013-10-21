@@ -33,13 +33,20 @@ public class Brain {
 	}
 
 	public void receivedMessage(String string, String ip, int port){
+		User u = null;
+		int numeroUsuarios = users.size();
+		for (int i = 0; i < numeroUsuarios; i++) {
+			u = users.get(i);
+			if(u.getIP().equals(ip)){
+				break;
+			}
+		}
 		Mensaje m = new Mensaje(string);
 		switch (m.getCode()) {
 		case 0:
 			//received 000 INIT nickname
 			try {
 				addUser(m.getText(), ip, port);
-//				sendList(ip, port);
 				sendMessage("001 INIT OK "+port, ip, port);
 			} catch (IPAlreadyInUseException e) {
 				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip, port);
@@ -51,7 +58,7 @@ public class Brain {
 			break;
 		case 100:
 			//received 100 LIST
-			sendList(ip, port);
+			sendList(ip, u.getPort());
 			break;
 		case 104:
 			//received 104 LISTERROR last_XXX_without_blanks
