@@ -356,6 +356,15 @@ public class JFrameMainWindow extends JFrame implements Observer {
 					this.listUsers.setModel(listModel);
 				}
 				
+				else if ((newString.substring(0, 3)).equals("200")) {
+					String nick = newString.substring(13, newString.length());
+					int x = JOptionPane.showConfirmDialog(null, "The user "+nick+" wants to start a chat session with you. Do you accept?", "Confirm chat request", JOptionPane.YES_NO_OPTION);
+					if (x == 0)
+						controller.acceptChatRequest();
+					else
+						controller.refuseChatRequest();
+				}
+				
 				else if (newString.equals("002")) {
 					JOptionPane.showMessageDialog(null, "Your nickname is already in use", "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -366,6 +375,14 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				
 				else if (newString.equals("004")) {
 					JOptionPane.showMessageDialog(null, "Your IP is already in use", "Error", JOptionPane.ERROR_MESSAGE);					
+				}
+				
+				else if (newString.equals("203")) {
+					JOptionPane.showMessageDialog(null, "The user have rejected your chat request", "Error", JOptionPane.ERROR_MESSAGE);					
+				}
+				
+				else if (newString.equals("204")) {
+					JOptionPane.showMessageDialog(null, "Chat request error, the user does not exist", "Error", JOptionPane.ERROR_MESSAGE);					
 				}
 			}
 		}

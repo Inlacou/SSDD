@@ -47,37 +47,22 @@ public class ClientThread implements Runnable {
 					controller.userDisconnected(nick);
 				}
 				
-//				else if ((message.substring(0, 3)).equals("201")) {
-//					//TODO 201 CHAT OK
-//				}
-				
-//				else if ((message.substring(0, 3)).equals("202")) {
-//					//TODO 202 CHAT ACCEPTED
-//				}
-				
-//				else if ((message.substring(0, 3)).equals("203")) {
-//					//TODO 203 CHAT REJECTED
-//				}
-				
-//				else if ((message.substring(0, 3)).equals("204")) {
-//					//TODO 204 CHAT ERROR USER DOES NOT EXIST
-//				}
-				
-//				else if ((message.substring(0, 3)).equals("205")) {
-//					//TODO 205 CHAT STARTED
-//				}
-				
-				else if ((message.substring(0, 3)).equals("211")) {
-					//TODO 211 RECMSG XXX
+				else if ((message.substring(0, 3)).equals("200")) {
+					String nick = message.substring(13, message.length());
+					controller.receiveChatRequest(nick);
 				}
+				
+//				else if ((message.substring(0, 3)).equals("211")) {
+//					//TODO 211 RECMSG XXX (en el controller)
+//				}
 
-				else if ((message.substring(0, 3)).equals("212")) {
-					//TODO 212 SENDMSG XXX text
-				}
+//				else if ((message.substring(0, 3)).equals("212")) {
+//					//TODO 212 SENDMSG XXX text
+//				}
 
-				else if ((message.substring(0, 3)).equals("300")) {
-					//TODO 300 LEAVECHAT
-				}
+//				else if ((message.substring(0, 3)).equals("300")) {
+//					//TODO 300 LEAVECHAT
+//				}
 
 //				else if ((message.substring(0, 3)).equals("301")) {
 //					//TODO 301 LEAVECHAT OK

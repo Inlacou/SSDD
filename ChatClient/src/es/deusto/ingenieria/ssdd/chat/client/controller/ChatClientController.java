@@ -231,16 +231,61 @@ public class ChatClientController {
 		return connectedUsers;
 	}
 
-	public boolean sendMessage(String message) {
+	public boolean sendMessage(String str) {
 
 		//TODO ENTER YOUR CODE TO SEND A MESSAGE
+		
+		String message = "201 SENDMSG 000 " + str;
+		ArrayList<String> messagesArray = new ArrayList<String>();
+		
+		try (DatagramSocket udpSocket = new DatagramSocket()) {
+			InetAddress serverHost = InetAddress.getByName(serverIP);			
+			byte[] byteMsg = message.getBytes();			
+			
+			if (byteMsg.length > 1024) {
+				
+				int pos = 0;
+				while (byteMsg.length > 1024) {
+					
+					
+				}
+				
+				
+			}
+			
+			else {
+				
+				DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+				udpSocket.send(request);
+			}
+			
+			
+			byte[] buffer = new byte[1024];
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 
-		return true;
+			udpSocket.receive(reply);
+			String response = new String(reply.getData());
+
+			if (response.substring(0, 3).equals("211")) {//TODO 211 no, ha cambiado a 214
+
+				int lastMsgNumber = Integer.parseInt(response.substring(11, 14));
+				if (lastMsgNumber == messagesArray.size()-1)
+					return true;
+			}
+
+		} catch (SocketException e) {
+			System.err.println("# UDPClient Socket error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("# UDPClient IO error: " + e.getMessage());
+		}
+
+		return false;
 	}
 
 	public void receiveMessage() {
 
-		//TODO ENTER YOUR CODE TO RECEIVE A MESSAGE
+		//TODO ENTER YOUR CODE TO RECEIVE A MESSAGE (no hace falta)
 
 		String message = "Received message";		
 
@@ -250,36 +295,95 @@ public class ChatClientController {
 
 	public boolean sendChatRequest(String to) {
 
-		//TODO ENTER YOUR CODE TO SEND A CHAT REQUEST
-
 		this.chatReceiver = new User();
 		this.chatReceiver.setNick(to);
+		
+		String message = "200 INITCHAT " + to;
 
-		return true;
+		try (DatagramSocket udpSocket = new DatagramSocket()) {
+			InetAddress serverHost = InetAddress.getByName(serverIP);			
+			byte[] byteMsg = message.getBytes();
+			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+			udpSocket.send(request);
+
+			byte[] buffer = new byte[1024];
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+
+			udpSocket.receive(reply);
+			String response = new String(reply.getData());
+
+			response = response.substring(0, 3);
+
+			if (response.equals("201")) {
+
+				reply = new DatagramPacket(buffer, buffer.length);
+				udpSocket.receive(reply);
+				
+				response = new String(reply.getData());
+				response = response.substring(0, 3);
+
+				udpSocket.close();
+				
+				if (response.equals("202")) {
+					
+					return true;
+				}
+				
+				else
+					this.observable.notifyObservers(response);
+			}
+
+		} catch (SocketException e) {
+			System.err.println("# UDPClient Socket error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("# UDPClient IO error: " + e.getMessage());
+		}
+
+		return false;
 	}	
 
-	public void receiveChatRequest() {
+	public void receiveChatRequest(String nick) {
 
-		//TODO ENTER YOUR CODE TO RECEIVE A CHAT REQUEST
+		String message = "200 INITCHAT " + nick;
 
-		String message = "Chat request details";
-
-		//Notify the chat request details to the GUI
 		this.observable.notifyObservers(message);
 	}
 
-	public boolean acceptChatRequest() {
+	public void acceptChatRequest() {
 
-		//TODO ENTER YOUR CODE TO ACCEPT A CHAT REQUEST
+		String message = "202 CHAT ACCEPTED";
 
-		return true;
+		try (DatagramSocket udpSocket = new DatagramSocket()) {
+			InetAddress serverHost = InetAddress.getByName(serverIP);			
+			byte[] byteMsg = message.getBytes();
+			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+			udpSocket.send(request);
+
+		} catch (SocketException e) {
+			System.err.println("# UDPClient Socket error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("# UDPClient IO error: " + e.getMessage());
+		}
 	}
 
-	public boolean refuseChatRequest() {
+	public void refuseChatRequest() {
 
-		//TODO ENTER YOUR CODE TO REFUSE A CHAT REQUEST
+		String message = "203 CHAT REJECTED";
 
-		return true;
+		try (DatagramSocket udpSocket = new DatagramSocket()) {
+			InetAddress serverHost = InetAddress.getByName(serverIP);			
+			byte[] byteMsg = message.getBytes();
+			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+			udpSocket.send(request);
+
+		} catch (SocketException e) {
+			System.err.println("# UDPClient Socket error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("# UDPClient IO error: " + e.getMessage());
+		}
 	}	
 
 	public boolean sendChatClosure() {
@@ -293,7 +397,7 @@ public class ChatClientController {
 
 	public void receiveChatClosure() {
 
-		//TODO ENTER YOUR CODE TO RECEIVE A CHAT REQUEST
+		//TODO ENTER YOUR CODE TO RECEIVE A CHAT REQUEST (no hace falta)
 
 		String message = "Chat request details";
 
