@@ -39,7 +39,7 @@ public class Brain {
 			//received 000 INIT nickname
 			try {
 				addUser(m.getText(), ip, port);
-				sendList(ip, port);
+//				sendList(ip, port);
 				sendMessage("001 INIT OK "+port, ip, port);
 			} catch (IPAlreadyInUseException e) {
 				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip, port);
