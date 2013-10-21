@@ -6,18 +6,18 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-public class test {
+public class testLogin {
 	private static final String DEFAULT_IP = "0.0.0.0";
 	private static final int DEFAULT_PORT = 6789;
-	private static final String DEFAULT_MESSAGE = "104 LISTERROR 001";	
+	private static final String DEFAULT_MESSAGE = "000 INIT John Smith2";	
 	
 	public static void main(String args[]) {
 		//args[0] = Server IP
-		String serverIP = args.length == 0 ? test.DEFAULT_IP : args[0];
+		String serverIP = args.length == 0 ? testLogin.DEFAULT_IP : args[0];
 		//args[1] = Server socket port
-		int serverPort = args.length == 0 ? test.DEFAULT_PORT : Integer.parseInt(args[1]);
+		int serverPort = args.length == 0 ? testLogin.DEFAULT_PORT : Integer.parseInt(args[1]);
 		//args[2] = Message
-		String message = args.length == 0 ? test.DEFAULT_MESSAGE : args[2];
+		String message = args.length == 0 ? testLogin.DEFAULT_MESSAGE : args[2];
 		
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			

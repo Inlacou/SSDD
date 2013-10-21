@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import es.deusto.ingenieria.ssdd.chat.data.User;
 
 public class Handler extends Thread {
 
@@ -37,10 +36,6 @@ public class Handler extends Thread {
 			                   "' -> " + new String(request.getData()));
 			brain.receivedMessage(new String(request.getData()), request.getAddress().getHostAddress(), request.getPort());
 			
-			
-			//reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
-			//udpSocket.send(reply);				
-		
 			} catch (IOException e) {
 				System.err.println("# UDPServer IO error: " + e.getMessage());
 			}

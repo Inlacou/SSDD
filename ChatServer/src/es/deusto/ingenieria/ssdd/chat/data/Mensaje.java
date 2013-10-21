@@ -16,8 +16,12 @@ public class Mensaje {
 		while (st.hasMoreElements()) {
 			text += st.nextToken() + " ";
 		}
+		text = text.trim();
 	}
 	
+	public Mensaje() {
+	}
+
 	public int getCode() {
 		return code;
 	}
@@ -49,6 +53,25 @@ public class Mensaje {
 		
 		System.out.println(m1);
 		
+	}
+
+	public boolean addText(String string) {
+		String auxText = text+string;
+		if((Integer.toString(code)+" "+messageType+" "+auxText).getBytes().length>1024){
+			return false;
+		}
+		text = auxText;
+		return true;
+	}
+
+	public void fillWithBlanks() {
+		System.out.println("en fillWithBlanks()");
+		String auxText = text;
+		while((Integer.toString(code)+" "+messageType+" "+auxText).getBytes().length>1024){
+			auxText += " ";
+		}
+		text = auxText;
+		System.out.println(Integer.toString(code)+" "+messageType+" "+auxText);
 	}
 	
 }

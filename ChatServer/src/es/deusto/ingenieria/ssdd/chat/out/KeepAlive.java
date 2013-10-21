@@ -12,9 +12,7 @@ public class KeepAlive extends Thread {
 
 	private int ms;
 	private ArrayList<User> users;
-	DatagramPacket request;
 	DatagramSocket udpSocket;
-	byte[] buffer;
 	
 	public KeepAlive(int ms, ArrayList<User> users, DatagramSocket udpSocket){
 		this.ms = ms;
