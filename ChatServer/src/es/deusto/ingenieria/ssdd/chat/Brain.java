@@ -76,7 +76,11 @@ public class Brain {
 			} catch (NotLoggedInException e) {
 				sendMessage("666 ERROR NOT LOGGED IN", ip, port);
 			}
-			initChat(m.getText(), ip, port);
+			try{
+				initChat(m.getText(), ip, port);
+			}catch (NullPointerException e) {
+				sendMessage("204 CHAT ERROR USER DOES NOT EXIST", ip, port);
+			}
 			break;
 		case 210:
 			//received 210 SENDMSG xxx text
@@ -104,7 +108,7 @@ public class Brain {
 				sendMessage("666 ERROR NOT LOGGED IN", ip, port);
 			}
 			sendMessage("301 LEAVECHAT OK", ip, port);
-			leaveChat(ip);
+			leaveChat(ip, port);
 			break;
 		case 301:
 			//301 LEAVECHAT OK
@@ -129,7 +133,7 @@ public class Brain {
 		}
 	}
 
-	private void leaveChat(String ip) {
+	private void leaveChat(String ip, int port) {
 		User u = null;
 		Chat c;
 		int numeroChats = chats.size();
@@ -144,10 +148,10 @@ public class Brain {
 			}
 		}
 		sendMessage("300 LEAVECHAT", u.getIP(), u.getPort());
-		brain2.registerMessage("300 LEAVECHAT", u.getIP(), u.getPort(), "301 LEAVECHAT OK", u.getIP());
+		brain2.registerMessage("300 LEAVECHAT", u.getIP(), u.getPort(), "301 LEAVECHAT OK", ip, port);
 	}
 
-	private void initChat(String text, String ip, int port){ //TODO empezado, abandonado para el final
+	private void initChat(String text, String ip, int port){
 		User destinationUser = null;
 		int numeroUsuarios = users.size();
 		for (int i = 0; i < numeroUsuarios; i++) {
@@ -156,6 +160,8 @@ public class Brain {
 			}
 		}
 		sendMessage("200 INITCHAT "+text.trim(), destinationUser.getIP(), destinationUser.getPort());
+		sendMessage("201 CHAT OK", ip, port);
+		brain2.registerMessage("200 INITCHAT "+text.trim(), destinationUser.getIP(), destinationUser.getPort(), "202 CHAT ACCEPTED", "202 CHAT ACCEPTED", ip, port);
 	}
 
 	private void userLoggedIn(String ip) throws NotLoggedInException {
@@ -281,6 +287,10 @@ public class Brain {
 			}else if(nick.contains(":<:") && nick.contains(":>:")){
 				throw new NickNameNotAllowedException();
 			}
+		}
+		for (int i = 0; i < numeroUsuarios; i++) {
+			auxUser = users.get(i);
+			sendMessage("102 NEWUSER "+nick, auxUser.getIP(), auxUser.getPort());
 		}
 		users.add(new User(nick, ip, port));
 	}
