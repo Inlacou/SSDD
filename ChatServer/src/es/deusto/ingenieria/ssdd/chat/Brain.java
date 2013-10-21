@@ -27,7 +27,7 @@ public class Brain {
 		ka.start();
 		brain2 = new Brain2(h.udpSocket, h);
 		brain2.start();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 1; i++) {
 			users.add(new User("nick"+i, "1.1.1."+i, 8000+i));
 		}
 	}
