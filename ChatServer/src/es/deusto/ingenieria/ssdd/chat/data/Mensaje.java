@@ -71,7 +71,7 @@ public class Mensaje {
 			auxText += " ";
 		}
 		text = auxText;
-		System.out.println(Integer.toString(code)+" "+messageType+" "+auxText);
+		System.out.println("en fillWithBlanks(): '" + Integer.toString(code)+" "+messageType+" "+auxText+"'");
 	}
 	
 }

@@ -39,6 +39,7 @@ public class Brain {
 			//received 000 INIT nickname
 			try {
 				addUser(m.getText(), ip, port);
+				sendList(ip, port);
 				sendMessage("001 INIT OK "+port, ip, port);
 			} catch (IPAlreadyInUseException e) {
 				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip, port);
@@ -181,10 +182,6 @@ public class Brain {
 		String numeroMensaje;
 		Mensaje m;
 
-		for (User u : users) {
-			System.out.println(u);
-		}
-
 		int numeroUsuarios = users.size();
 		int numeroMensajes = 0;
 		int numeroMensajesYaEnviados = Integer.parseInt(text);
@@ -216,10 +213,6 @@ public class Brain {
 		String messageType = "LIST";
 		String numeroMensaje;
 		Mensaje m;
-
-		for (User u : users) {
-			System.out.println(u);
-		}
 
 		int numeroUsuarios = users.size();
 		int numeroMensajes = 0;

@@ -46,7 +46,7 @@ public class Handler extends Thread {
 		try {
 			reply = new DatagramPacket(message.getBytes(), message.getBytes().length, InetAddress.getByName(ip), port);
 			udpSocket.send(reply);
-			System.out.println(" - Sent a message to '" + ip + "' -> " + message);
+			System.out.println(" + Sent a message to '" + ip + "' -> " + message);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

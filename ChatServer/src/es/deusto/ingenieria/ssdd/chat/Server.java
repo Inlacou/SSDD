@@ -4,12 +4,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
-public class Main {
+public class Server {
 	
 	private static final int PORT = 6789;
 	
 	public static void main(String[] args) {
-		int serverPort = args.length == 0 ? Main.PORT : Integer.parseInt(args[0]);
+		int serverPort = args.length == 0 ? Server.PORT : Integer.parseInt(args[0]);
 		
 		try (DatagramSocket udpSocket = new DatagramSocket(serverPort)) {
 			DatagramPacket request = null;
