@@ -6,12 +6,33 @@ public class MensajeReenviable extends Mensaje {
 	private long time;
 	private String ipEnvio;
 	private int portEnvio;
+	private String mensajeRecepcion;
+	private String ipRecepcion;
 	
-	public MensajeReenviable(String s, long time, String ipEnvio, int portEnvio){
-		super(s);
-		this.time = time;
+	public MensajeReenviable(String textoDelMensaje, String ipEnvio, int portEnvio,
+			String mensajeRecepcion, String ipRecepcion, long time) {
+		super(textoDelMensaje);
 		this.ipEnvio = ipEnvio;
 		this.portEnvio = portEnvio;
+		this.time = time;
+		this.mensajeRecepcion = mensajeRecepcion;
+		this.ipRecepcion = ipRecepcion;
+	}
+	
+	public String getMensajeRecepcion() {
+		return mensajeRecepcion;
+	}
+
+	public void setMensajeRecepcion(String mensajeRecepcion) {
+		this.mensajeRecepcion = mensajeRecepcion;
+	}
+
+	public String getIpRecepcion() {
+		return ipRecepcion;
+	}
+
+	public void setIpRecepcion(String ipRecepcion) {
+		this.ipRecepcion = ipRecepcion;
 	}
 
 	public long getTime() {

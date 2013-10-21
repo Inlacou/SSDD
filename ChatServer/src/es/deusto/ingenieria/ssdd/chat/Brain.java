@@ -26,7 +26,7 @@ public class Brain {
 		users = new ArrayList<User>();
 		KeepAlive ka = new KeepAlive(5000, users, h.udpSocket);
 		ka.start();
-		brain2 = new Brain2(h.udpSocket);
+		brain2 = new Brain2(h.udpSocket, h);
 		brain2.start();
 
 		for (int i = 0; i < 100; i++) {
@@ -88,7 +88,7 @@ public class Brain {
 			//TODO
 			break;
 		case 213:
-			//213 RECMSG XXX
+			//213 RECMSG xxx
 			try {
 				userLoggedIn(ip);
 			} catch (NotLoggedInException e) {
@@ -108,12 +108,12 @@ public class Brain {
 			break;
 		case 301:
 			//301 LEAVECHAT OK
+			brain2.receivedMessage(string, ip);
 			try {
 				userLoggedIn(ip);
 			} catch (NotLoggedInException e) {
 				sendMessage("666 ERROR NOT LOGGED IN", ip, port);
 			}
-			//TODO
 			break;
 		case 400:
 			//400 LEAVEAPP
