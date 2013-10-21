@@ -166,6 +166,22 @@ public class ChatClientController {
 	public List<String> getConnectedUsers(JFrame f) {
 
 		List<String> connectedUsers = new ArrayList<>();
+		
+		String message = "100 LIST";
+
+		try (DatagramSocket udpSocket = new DatagramSocket()) {
+			InetAddress serverHost = InetAddress.getByName(serverIP);			
+			byte[] byteMsg = message.getBytes();
+			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+			udpSocket.send(request);
+			udpSocket.close();
+
+		} catch (SocketException e) {
+			System.err.println("# UDPClient Socket error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("# UDPClient IO error: " + e.getMessage());
+		}
 
 		final JDialog d = new JDialog();
 		JPanel p1 = new JPanel(new GridBagLayout());
@@ -212,7 +228,7 @@ public class ChatClientController {
 
 		else {
 
-			String message = "104 LISTERROR " + lastSubsequentMessage;
+			message = "104 LISTERROR " + lastSubsequentMessage;
 
 			try (DatagramSocket udpSocket = new DatagramSocket()) {
 				InetAddress serverHost = InetAddress.getByName(serverIP);			
