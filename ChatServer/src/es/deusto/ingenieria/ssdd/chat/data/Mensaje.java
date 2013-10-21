@@ -63,5 +63,15 @@ public class Mensaje {
 		text = auxText;
 		return true;
 	}
+
+	public void fillWithBlanks() {
+		System.out.println("en fillWithBlanks()");
+		String auxText = text;
+		while((Integer.toString(code)+" "+messageType+" "+auxText).getBytes().length>1024){
+			auxText += " ";
+		}
+		text = auxText;
+		System.out.println(Integer.toString(code)+" "+messageType+" "+auxText);
+	}
 	
 }
