@@ -27,7 +27,6 @@ public class Brain {
 		ka.start();
 		brain2 = new Brain2(h.udpSocket, h);
 		brain2.start();
-
 		for (int i = 0; i < 100; i++) {
 			users.add(new User("nick"+i, "1.1.1."+i, 8000+i));
 		}
@@ -41,7 +40,6 @@ public class Brain {
 			try {
 				addUser(m.getText(), ip, port);
 				sendMessage("001 INIT OK "+port, ip, port);
-				sendList(ip, port);
 			} catch (IPAlreadyInUseException e) {
 				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip, port);
 			} catch (NickNameAlreadyInUseException e) {
