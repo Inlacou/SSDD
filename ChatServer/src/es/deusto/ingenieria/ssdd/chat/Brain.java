@@ -11,6 +11,8 @@ import es.deusto.ingenieria.ssdd.exceptions.NickNameAlreadyInUseException;
 import es.deusto.ingenieria.ssdd.exceptions.NickNameNotAllowedException;
 import es.deusto.ingenieria.ssdd.exceptions.NotLoggedInException;
 
+//TODO puertos
+
 public class Brain {
 
 	Handler handler;
@@ -38,7 +40,7 @@ public class Brain {
 			//received 000 INIT nickname
 			try {
 				addUser(m.getText(), ip, port);
-				sendMessage("001 INIT OK", ip, port);
+				sendMessage("001 INIT OK "+port, ip, port);
 				sendList(ip, port);
 			} catch (IPAlreadyInUseException e) {
 				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip, port);
@@ -70,16 +72,7 @@ public class Brain {
 			}
 			break;
 		case 210:
-			//received 210 SENDMSG xxx text
-			try {
-				userLoggedIn(ip);
-			} catch (NotLoggedInException e) {
-				sendMessage("666 ERROR NOT LOGGED IN", ip, port);
-			}
-			//TODO
-			break;
-		case 213:
-			//213 RECMSG xxx
+			//received 210 SENDMSG text
 			try {
 				userLoggedIn(ip);
 			} catch (NotLoggedInException e) {
