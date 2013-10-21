@@ -23,7 +23,7 @@ public class Brain {
 	public Brain(Handler h){
 		handler = h;
 		users = new ArrayList<User>();
-		KeepAlive ka = new KeepAlive(5000, users, h.udpSocket);
+		KeepAlive ka = new KeepAlive(300000, users, h.udpSocket);
 		ka.start();
 		brain2 = new Brain2(h.udpSocket, h);
 		brain2.start();
