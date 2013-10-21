@@ -1,9 +1,6 @@
 package es.deusto.ingenieria.ssdd.chat;
 
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import es.deusto.ingenieria.ssdd.chat.data.Chat;
 import es.deusto.ingenieria.ssdd.chat.data.Mensaje;
@@ -30,18 +27,8 @@ public class Brain {
 		brain2.start();
 
 		for (int i = 0; i < 100; i++) {
-			users.add(new User("nick"+i, "1.1.1."+i, 5959));
+			users.add(new User("nick"+i, "1.1.1."+i, 8000+i));
 		}
-
-		/*
-		ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-		exec.scheduleAtFixedRate(new Runnable() {
-		  @Override
-		  public void run() {
-
-		  }
-		}, 0, 5, TimeUnit.SECONDS);
-		 */
 	}
 
 	public void receivedMessage(String string, String ip, int port){

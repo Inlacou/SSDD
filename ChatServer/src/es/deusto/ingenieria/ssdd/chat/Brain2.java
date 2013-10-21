@@ -17,6 +17,7 @@ public class Brain2 extends Thread {
 	public Brain2(DatagramSocket udpSocket, Handler h) {
 		handler = h;
 		this.udpSocket = udpSocket;
+		mensajes = new ArrayList<MensajeReenviable>();
 	}
 
 	@Override

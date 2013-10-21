@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import es.deusto.ingenieria.ssdd.chat.data.User;
 
 public class Handler extends Thread {
 
