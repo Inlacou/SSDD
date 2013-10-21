@@ -53,6 +53,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 	private JTextArea textAreaSendMsg;
 	private JButton btnSendMsg;
 	private SimpleDateFormat textFormatter = new SimpleDateFormat("HH:mm:ss");
+	private DefaultListModel<String> listModel;
 	
 	private ChatClientController controller;	
 
@@ -99,9 +100,9 @@ public class JFrameMainWindow extends JFrame implements Observer {
 		JLabel lblServerIp = new JLabel("Server IP:");		
 		JLabel lblServerPort = new JLabel("Server Port:");
 		
-		txtFieldServerIP = new JTextField();
+		txtFieldServerIP = new JTextField("127.0.0.1");//TODO quitar valores predeterminados
 		txtFieldServerIP.setColumns(10);
-		txtFieldServerPort = new JTextField();
+		txtFieldServerPort = new JTextField("6789");//TODO quitar valores predeterminados
 		txtFieldServerPort.setColumns(10);
 		
 		JLabel lblNick = new JLabel("Nick:");
@@ -195,6 +196,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 	}
 	
 	private void btnConnectClick() {
+		
 		if (!this.controller.isConnected()) {
 			if (this.txtFieldServerIP.getText().trim().isEmpty() ||
 				this.txtFieldServerIP.getText().trim().isEmpty() ||
@@ -210,10 +212,10 @@ public class JFrameMainWindow extends JFrame implements Observer {
 					                    this.txtFieldNick.getText())) {
 				
 				//Obtain the list of connected Users
-				List<String> connectedUsers = this.controller.getConnectedUsers();
+				List<String> connectedUsers = this.controller.getConnectedUsers(this);
 				
 				if (!connectedUsers.isEmpty()) {
-					DefaultListModel<String> listModel = new DefaultListModel<>();
+					listModel = new DefaultListModel<>();
 					
 					for (String user : connectedUsers) {
 						listModel.addElement(user);
@@ -330,7 +332,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 	@Override
 	public void update(Observable observable, Object object) {
 		
-		//Update this method to process the request received from other users
+		//TODO Update this method to process the request received from other users
 		
 		if (this.controller.isConnected()) {			
 			if (object.getClass().getName().equals(Message.class.getName())) {
@@ -338,6 +340,49 @@ public class JFrameMainWindow extends JFrame implements Observer {
 			
 				if (newMessage.getTo().getNick() == this.controller.getConnectedUser()) {
 					this.appendReceivedMessageToHistory(newMessage.getText(), newMessage.getFrom().getNick(), newMessage.getTimestamp());
+				}
+			}
+			
+			else if (object.getClass().getName().equals(String.class.getName())) {
+				String newString = (String) object;
+				
+				if ((newString.substring(0, 3)).equals("102")) {
+					listModel.addElement(newString.substring(12, newString.length()));
+					this.listUsers.setModel(listModel);
+				}
+				
+				else if ((newString.substring(0, 3)).equals("103")) {
+					listModel.addElement(newString.substring(13, newString.length()));
+					this.listUsers.setModel(listModel);
+				}
+				
+				else if ((newString.substring(0, 3)).equals("200")) {
+					String nick = newString.substring(13, newString.length());
+					int x = JOptionPane.showConfirmDialog(null, "The user "+nick+" wants to start a chat session with you. Do you accept?", "Confirm chat request", JOptionPane.YES_NO_OPTION);
+					if (x == 0)
+						controller.acceptChatRequest();
+					else
+						controller.refuseChatRequest();
+				}
+				
+				else if (newString.equals("002")) {
+					JOptionPane.showMessageDialog(null, "Your nickname is already in use", "Error", JOptionPane.ERROR_MESSAGE);
+				}
+				
+				else if (newString.equals("003")) {
+					JOptionPane.showMessageDialog(null, "Your nickname is not allowed", "Error", JOptionPane.ERROR_MESSAGE);					
+				}
+				
+				else if (newString.equals("004")) {
+					JOptionPane.showMessageDialog(null, "Your IP is already in use", "Error", JOptionPane.ERROR_MESSAGE);					
+				}
+				
+				else if (newString.equals("203")) {
+					JOptionPane.showMessageDialog(null, "The user have rejected your chat request", "Error", JOptionPane.ERROR_MESSAGE);					
+				}
+				
+				else if (newString.equals("204")) {
+					JOptionPane.showMessageDialog(null, "Chat request error, the user does not exist", "Error", JOptionPane.ERROR_MESSAGE);					
 				}
 			}
 		}
