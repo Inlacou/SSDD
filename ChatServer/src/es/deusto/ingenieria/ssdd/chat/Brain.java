@@ -180,6 +180,7 @@ public class Brain {
 				u = users.get(i);
 				sendMessage("103 LEFTUSER " + leftUserNickName, u.getIP(), u.getPort());
 			}
+			sendMessage("401 LEAVEAPP OK", ip, port);
 		}
 	}
 
