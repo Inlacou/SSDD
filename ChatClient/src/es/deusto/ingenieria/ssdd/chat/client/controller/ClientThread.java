@@ -28,10 +28,12 @@ public class ClientThread implements Runnable {
 			try (DatagramSocket udpSocket = new DatagramSocket(portToListen)) {
 				
 				reply = new DatagramPacket(buffer, buffer.length);
+				System.out.println("Listening in the port " + portToListen);
 				udpSocket.receive(reply);
 				
 				message = new String(reply.getData());
 				message = message.trim();
+				System.out.println("Received a message -> " + message);
 				
 				if ((message.substring(0, 3)).equals("100")) {
 					controller.addMessageToArray(message.substring(9));
