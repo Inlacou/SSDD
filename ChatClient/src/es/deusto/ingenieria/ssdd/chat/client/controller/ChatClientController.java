@@ -84,6 +84,7 @@ public class ChatClientController {
 		this.connectedUser.setNick(nick);
 		this.serverIP = ip;
 		this.serverPort = port;
+		restartMessagesArray();
 
 		String message = "000 INIT " + nick;
 
@@ -100,6 +101,7 @@ public class ChatClientController {
 			udpSocket.receive(reply);
 			String response = new String(reply.getData());
 			String s = response.trim();
+			System.out.println("Received from the server: " + s);
 
 			udpSocket.close();
 
@@ -152,6 +154,7 @@ public class ChatClientController {
 			udpSocket.close();
 
 			response = response.trim();
+			System.out.println("Received from the server: " + response);
 			response = response.substring(0, 3);
 
 			if (response.equals("401")) {
@@ -234,7 +237,16 @@ public class ChatClientController {
 
 		else {
 
-			message = "104 LISTERROR " + lastSubsequentMessage;
+			message = "104 LISTERROR ";
+			
+			if (lastSubsequentMessage < 10)
+				message = message + "00" + lastSubsequentMessage;
+			
+			else if (lastSubsequentMessage < 100)
+				message = message + "0" + lastSubsequentMessage;
+			
+			else
+				message = message + lastSubsequentMessage;
 
 			try (DatagramSocket udpSocket = new DatagramSocket()) {
 				InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -310,6 +322,8 @@ public class ChatClientController {
 
 			udpSocket.receive(reply);
 			String response = new String(reply.getData());
+			response = response.trim();
+			System.out.println("Received from the server: " + response);
 
 			response = response.substring(0, 3);
 
@@ -319,6 +333,8 @@ public class ChatClientController {
 				udpSocket.receive(reply);
 
 				response = new String(reply.getData());
+				response = response.trim();
+				System.out.println("Received from the server: " + response);
 				response = response.substring(0, 3);
 
 				udpSocket.close();
@@ -410,6 +426,7 @@ public class ChatClientController {
 			udpSocket.close();
 
 			response = response.trim();
+			System.out.println("Received from the server: " + response);
 			response = response.substring(0, 3);
 
 			if (response.equals("301")) {
