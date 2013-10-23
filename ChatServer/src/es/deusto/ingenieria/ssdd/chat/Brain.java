@@ -269,9 +269,6 @@ public class Brain {
 			m.setText(numeroMensaje+" ");
 			while(i < numeroUsuarios && m.addText(":<:"+(users.get(i).getNick())+":>:")){
 				i++;
-				if(i >= numeroUsuarios){
-					m.fillWithBlanks();
-				}
 			}
 			numeroMensajes++;
 			sendMessage(m, ip, port);
