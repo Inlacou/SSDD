@@ -32,6 +32,7 @@ public class ClientThread implements Runnable {
 
 			try (DatagramSocket udpSocket = new DatagramSocket(portToListen)) {
 				
+				this.buffer = new byte[1024];
 				reply = new DatagramPacket(buffer, buffer.length);
 				System.out.println("Listening in the port " + portToListen);
 				udpSocket.receive(reply);
