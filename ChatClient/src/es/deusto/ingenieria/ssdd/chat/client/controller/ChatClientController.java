@@ -92,7 +92,8 @@ public class ChatClientController {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
-
+			System.out.println("Sent to the server: " + message);
+			
 			byte[] buffer = new byte[1024];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 
@@ -140,6 +141,7 @@ public class ChatClientController {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
+			System.out.println("Sent to the server: " + message);
 
 			byte[] buffer = new byte[1024];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
@@ -177,6 +179,7 @@ public class ChatClientController {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
+			System.out.println("Sent to the server: " + message);
 			udpSocket.close();
 
 		} catch (SocketException e) {
@@ -238,6 +241,7 @@ public class ChatClientController {
 				byte[] byteMsg = message.getBytes();
 				DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 				udpSocket.send(request);
+				System.out.println("Sent to the server: " + message);
 			} catch (SocketException e) {
 				System.err.println("# UDPClient Socket error: " + e.getMessage());
 				e.printStackTrace();
@@ -262,6 +266,7 @@ public class ChatClientController {
 					byte[] byteMsg = messagesArray.get(i);
 					DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 					udpSocket.send(request);
+					System.out.println("Sent to the server: " + new String(byteMsg));
 				}
 				
 				return true;
@@ -298,6 +303,7 @@ public class ChatClientController {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
+			System.out.println("Sent to the server: " + message);
 
 			byte[] buffer = new byte[1024];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
@@ -354,6 +360,7 @@ public class ChatClientController {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
+			System.out.println("Sent to the server: " + message);
 
 		} catch (SocketException e) {
 			System.err.println("# UDPClient Socket error: " + e.getMessage());
@@ -373,6 +380,7 @@ public class ChatClientController {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
+			System.out.println("Sent to the server: " + message);
 
 		} catch (SocketException e) {
 			System.err.println("# UDPClient Socket error: " + e.getMessage());
@@ -391,6 +399,7 @@ public class ChatClientController {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
+			System.out.println("Sent to the server: " + message);
 
 			byte[] buffer = new byte[1024];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
@@ -432,6 +441,7 @@ public class ChatClientController {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
+			System.out.println("Sent to the server: " + message);
 
 		} catch (SocketException e) {
 			System.err.println("# UDPClient Socket error: " + e.getMessage());
