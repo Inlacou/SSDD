@@ -32,7 +32,7 @@ public class Handler extends Thread {
 			try{
 			request = new DatagramPacket(buffer, buffer.length);
 			udpSocket.receive(request);				
-			System.out.println(" - Received a request from '" + request.getAddress().getHostAddress() + ":" + request.getPort() + 
+			System.out.println(" + Received a request from '" + request.getAddress().getHostAddress() + ":" + request.getPort() + 
 			                   "' -> " + new String(request.getData()));
 			brain.receivedMessage(new String(request.getData()), request.getAddress().getHostAddress(), request.getPort());
 			
@@ -44,9 +44,13 @@ public class Handler extends Thread {
 
 	public void sendMessage(String message, String ip, int port) {
 		try {
+			System.out.println(" * Sending a message to '" + ip + "' Port: "+port+" -> " + message);
+			while(message.getBytes().length<1024){
+				message += " ";
+			}
 			reply = new DatagramPacket(message.getBytes(), message.getBytes().length, InetAddress.getByName(ip), port);
 			udpSocket.send(reply);
-			System.out.println(" - Sent a message to '" + ip + "' Port: "+port+" -> " + message);
+			System.out.println(" - Sent a message to '" + ip + "' Port: "+port+" -> " + new String(reply.getData()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

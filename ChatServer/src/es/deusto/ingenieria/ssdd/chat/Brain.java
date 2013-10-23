@@ -47,6 +47,7 @@ public class Brain {
 			//received 000 INIT nickname
 			try {
 				addUser(m.getText(), ip, messagePort);
+				//sendList(ip, messagePort);
 				sendMessage("001 INIT OK "+messagePort, ip, messagePort);
 			} catch (IPAlreadyInUseException e) {
 				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip, messagePort);
@@ -179,9 +180,9 @@ public class Brain {
 				destinationUser = users.get(i);
 			}
 		}
-		sendMessage("200 INITCHAT "+text.trim(), destinationUser.getIP(), destinationUser.getPort());
+		sendMessage("200 INITCHAT "+text, destinationUser.getIP(), destinationUser.getPort());
 		sendMessage("201 CHAT OK", ip, port);
-		brain2.registerMessage("200 INITCHAT "+text.trim(), destinationUser.getIP(), destinationUser.getPort(), "202 CHAT ACCEPTED", "202 CHAT ACCEPTED", ip, port);
+		brain2.registerMessage("200 INITCHAT "+text, destinationUser.getIP(), destinationUser.getPort(), "202 CHAT ACCEPTED", "202 CHAT ACCEPTED", ip, port);
 	}
 
 	private void userLoggedIn(String ip) throws NotLoggedInException {
@@ -201,7 +202,7 @@ public class Brain {
 
 	private void leaveApp(String text, String ip, int port) {
 		int numeroUsuarios = users.size();
-		User u;
+		User u = null;
 		String leftUserNickName = "";
 		for (int i = 0; i < numeroUsuarios; i++) {
 			u = users.get(i);
@@ -214,6 +215,7 @@ public class Brain {
 				u = users.get(i);
 				sendMessage("103 LEFTUSER " + leftUserNickName, u.getIP(), u.getPort());
 			}
+			users.remove(u);
 			sendMessage("401 LEAVEAPP OK", ip, port);
 		}
 	}
@@ -237,11 +239,8 @@ public class Brain {
 			}
 			m.setMessageType(messageType);
 			m.setText(numeroMensaje+" ");
-			while(i < numeroUsuarios && m.addText(":<:"+(users.get(i).getNick().trim())+":>:")){
+			while(i < numeroUsuarios && m.addText(":<:"+(users.get(i).getNick())+":>:")){
 				i++;
-				if(i >= numeroUsuarios){
-					m.fillWithBlanks();
-				}
 			}
 			numeroMensajes++;
 			if(numeroMensajes>numeroMensajesYaEnviados){
@@ -268,7 +267,7 @@ public class Brain {
 			}
 			m.setMessageType(messageType);
 			m.setText(numeroMensaje+" ");
-			while(i < numeroUsuarios && m.addText(":<:"+(users.get(i).getNick().trim())+":>:")){
+			while(i < numeroUsuarios && m.addText(":<:"+(users.get(i).getNick())+":>:")){
 				i++;
 				if(i >= numeroUsuarios){
 					m.fillWithBlanks();
