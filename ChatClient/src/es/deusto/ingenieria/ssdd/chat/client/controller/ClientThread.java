@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
+import es.deusto.ingenieria.ssdd.chat.keepalive.KeepAlive;
+
 public class ClientThread implements Runnable {
 
 	private boolean stop;
@@ -22,6 +24,9 @@ public class ClientThread implements Runnable {
 
 	@Override
 	public void run() {
+		
+		KeepAlive ka = new KeepAlive(this);
+		ka.start();
 
 		while (!stop) {
 
@@ -53,38 +58,35 @@ public class ClientThread implements Runnable {
 					String nick = message.substring(13, message.length());
 					controller.receiveChatRequest(nick);
 				}
-				
-//				else if ((message.substring(0, 3)).equals("211")) {
-//					//TODO 211 RECMSG XXX (en el controller)
-//				}
 
-//				else if ((message.substring(0, 3)).equals("212")) {
-//					//TODO 212 SENDMSG XXX text
-//				}
+				else if ((message.substring(0, 3)).equals("212")) {
+					String msg = message.substring(12, message.length());
+					controller.receiveMessage(msg);
+				}
 
-//				else if ((message.substring(0, 3)).equals("300")) {
-//					//TODO 300 LEAVECHAT
-//				}
-
-//				else if ((message.substring(0, 3)).equals("301")) {
-//					//TODO 301 LEAVECHAT OK
-//				}
-				
-//				else if ((message.substring(0, 3)).equals("401")) {
-//					//TODO 401 LEAVEAPP OK
-//				}
+				else if ((message.substring(0, 3)).equals("300")) {
+					controller.receiveChatClosure();
+				}
 
 				else if ((message.substring(0, 3)).equals("666")) {
-					//TODO 666 ERROR NOT LOGGED IN
+					stop = true;
+					ka.stopThread();
+					controller.notLoggedIn666Error();
 				}
 
 				else if ((message.substring(0, 3)).equals("999")) {
-					//TODO 999 KEEPALIVE
+					ka.setLastKeepAlive();
 				}
 				
 			} catch (IOException e) {
 				stop = true;
+				ka.stopThread();
 			}
 		}
+	}
+	
+	public void stopThread() {
+		this.stop = true;
+		controller.serverIsDown();
 	}
 }

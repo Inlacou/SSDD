@@ -8,6 +8,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Observer;
 
@@ -18,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import es.deusto.ingenieria.ssdd.util.observer.local.LocalObservable;
+import es.deusto.ingenieria.ssdd.chat.data.Message;
 import es.deusto.ingenieria.ssdd.chat.data.User;
 
 public class ChatClientController {
@@ -116,7 +118,7 @@ public class ChatClientController {
 
 			else
 				this.observable.notifyObservers(response);
-			
+
 		} catch (SocketException e) {
 			System.err.println("# UDPClient Socket error: " + e.getMessage());
 			e.printStackTrace();
@@ -147,6 +149,7 @@ public class ChatClientController {
 
 			udpSocket.close();
 
+			response = response.trim();
 			response = response.substring(0, 3);
 
 			if (response.equals("401")) {
@@ -166,7 +169,7 @@ public class ChatClientController {
 	public List<String> getConnectedUsers(JFrame f) {
 
 		List<String> connectedUsers = new ArrayList<>();
-		
+
 		String message = "100 LIST";
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
@@ -209,7 +212,7 @@ public class ChatClientController {
 		t.start();
 		d.setVisible(true);
 
-		connectedUsers.add(connectedUser.getNick());
+//		connectedUsers.add(connectedUser.getNick());
 
 		if (checkSubsequentMessages()) {
 
@@ -249,71 +252,45 @@ public class ChatClientController {
 
 	public boolean sendMessage(String str) {
 
-		//TODO ENTER YOUR CODE TO SEND A MESSAGE
-		
-		String message = "201 SENDMSG 000 " + str;
-		ArrayList<String> messagesArray = new ArrayList<String>();
-		
-		try (DatagramSocket udpSocket = new DatagramSocket()) {
-			InetAddress serverHost = InetAddress.getByName(serverIP);			
-			byte[] byteMsg = message.getBytes();			
-			
-			if (byteMsg.length > 1024) {
+		ArrayList<byte[]> messagesArray = this.splitMessageIntoByteArrays(str);
+
+			try (DatagramSocket udpSocket = new DatagramSocket()) {
+				InetAddress serverHost = InetAddress.getByName(serverIP);
 				
-				int pos = 0;
-				while (byteMsg.length > 1024) {
+				for (int i=0; i<messagesArray.size(); i++) {
 					
-					
+					byte[] byteMsg = messagesArray.get(i);
+					DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+					udpSocket.send(request);
 				}
 				
-				
+				return true;
+
+			} catch (SocketException e) {
+				System.err.println("# UDPClient Socket error: " + e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				System.err.println("# UDPClient IO error: " + e.getMessage());
 			}
-			
-			else {
-				
-				DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
-				udpSocket.send(request);
-			}
-			
-			
-			byte[] buffer = new byte[1024];
-			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-
-			udpSocket.receive(reply);
-			String response = new String(reply.getData());
-
-			if (response.substring(0, 3).equals("211")) {//TODO 211 no, ha cambiado a 214
-
-				int lastMsgNumber = Integer.parseInt(response.substring(11, 14));
-				if (lastMsgNumber == messagesArray.size()-1)
-					return true;
-			}
-
-		} catch (SocketException e) {
-			System.err.println("# UDPClient Socket error: " + e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println("# UDPClient IO error: " + e.getMessage());
-		}
 
 		return false;
 	}
 
-	public void receiveMessage() {
+	public void receiveMessage(String message) {		
 
-		//TODO ENTER YOUR CODE TO RECEIVE A MESSAGE (no hace falta)
-
-		String message = "Received message";		
-
-		//Notify the received message to the GUI
-		this.observable.notifyObservers(message);
+		Message msg = new Message();
+		msg.setFrom(this.chatReceiver);
+		msg.setText(message);
+		msg.setTimestamp(GregorianCalendar.getInstance().getTime().getTime());
+		msg.setTo(this.connectedUser);
+		this.observable.notifyObservers(msg);
 	}	
 
 	public boolean sendChatRequest(String to) {
 
 		this.chatReceiver = new User();
 		this.chatReceiver.setNick(to);
-		
+
 		String message = "200 INITCHAT " + to;
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
@@ -334,17 +311,17 @@ public class ChatClientController {
 
 				reply = new DatagramPacket(buffer, buffer.length);
 				udpSocket.receive(reply);
-				
+
 				response = new String(reply.getData());
 				response = response.substring(0, 3);
 
 				udpSocket.close();
-				
+
 				if (response.equals("202")) {
-					
+
 					return true;
 				}
-				
+
 				else
 					this.observable.notifyObservers(response);
 			}
@@ -362,6 +339,8 @@ public class ChatClientController {
 	public void receiveChatRequest(String nick) {
 
 		String message = "200 INITCHAT " + nick;
+		this.chatReceiver = new User();
+		this.chatReceiver.setNick(nick);
 
 		this.observable.notifyObservers(message);
 	}
@@ -387,6 +366,7 @@ public class ChatClientController {
 	public void refuseChatRequest() {
 
 		String message = "203 CHAT REJECTED";
+		this.chatReceiver = null;
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -404,21 +384,61 @@ public class ChatClientController {
 
 	public boolean sendChatClosure() {
 
-		//TODO ENTER YOUR CODE TO SEND A CHAT CLOSURE
+		String message = "300 LEAVECHAT";
 
-		this.chatReceiver = null;
+		try (DatagramSocket udpSocket = new DatagramSocket()) {
+			InetAddress serverHost = InetAddress.getByName(serverIP);			
+			byte[] byteMsg = message.getBytes();
+			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+			udpSocket.send(request);
 
-		return true;
+			byte[] buffer = new byte[1024];
+			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+
+			udpSocket.receive(reply);
+			String response = new String(reply.getData());
+
+			udpSocket.close();
+
+			response = response.trim();
+			response = response.substring(0, 3);
+
+			if (response.equals("301")) {
+
+				this.chatReceiver = null;
+				return true;
+			}
+
+		} catch (SocketException e) {
+			System.err.println("# UDPClient Socket error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("# UDPClient IO error: " + e.getMessage());
+		}
+		return false;
 	}
 
 	public void receiveChatClosure() {
 
-		//TODO ENTER YOUR CODE TO RECEIVE A CHAT REQUEST (no hace falta)
+		String message = "300 " + this.chatReceiver.getNick();
+		this.chatReceiver = null;
 
-		String message = "Chat request details";
-
-		//Notify the chat request details to the GUI
 		this.observable.notifyObservers(message);
+		
+		message = "301 LEAVECHAT OK";
+
+		try (DatagramSocket udpSocket = new DatagramSocket()) {
+			InetAddress serverHost = InetAddress.getByName(serverIP);			
+			byte[] byteMsg = message.getBytes();
+			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+			udpSocket.send(request);
+
+		} catch (SocketException e) {
+			System.err.println("# UDPClient Socket error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("# UDPClient IO error: " + e.getMessage());
+		}
 	}
 
 	public void userConnected(String userNick) {
@@ -457,5 +477,50 @@ public class ChatClientController {
 		}
 
 		return true;
+	}
+	
+	public ArrayList<byte[]> splitMessageIntoByteArrays(String str) {
+		
+		String head = "210 SENDMSG ";
+		String finalString = head + str;
+		byte[] array = finalString.getBytes();
+		ArrayList<byte[]> lastArray = new ArrayList<>();
+
+		if (array.length > 1024) {
+			int counter = 0;
+			String[] words = (str.trim()).split(" ");
+			do {
+				finalString = head.substring(0, head.length()-1);
+				byte[] arr2 = finalString.getBytes();
+				boolean stop = false;
+				for (int i=counter; i<words.length && !stop; i++) {
+					finalString = finalString + " " + words[i];
+					if (finalString.getBytes().length <= 24) {
+						arr2 = finalString.getBytes();
+						counter = counter + 1;
+					}
+					else {
+						stop = true;
+					}
+				}
+				lastArray.add(arr2);
+			} while (counter < words.length);
+		}
+
+		else {
+			lastArray.add(array);
+		}
+
+		return lastArray;
+	}
+	
+	public void notLoggedIn666Error () {
+		
+		this.observable.notifyObservers("666");
+	}
+	
+	public void serverIsDown() {
+		
+		this.observable.notifyObservers("999");
 	}
 }

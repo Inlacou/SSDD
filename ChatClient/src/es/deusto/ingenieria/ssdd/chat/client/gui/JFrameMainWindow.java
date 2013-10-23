@@ -302,7 +302,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 	}
 	
 	private void appendSentMessageToHistory() {		
-		String time = textFormatter.format(GregorianCalendar.getInstance().getTime());		
+		String time = textFormatter.format(GregorianCalendar.getInstance().getTime());	
 		String newMessage = " " + time + " - [" + this.controller.getConnectedUser() + "]: " + this.textAreaSendMsg.getText() + "\n";
 		SimpleAttributeSet attrs = new SimpleAttributeSet();
 		StyleConstants.setBold(attrs, true);
@@ -315,8 +315,8 @@ public class JFrameMainWindow extends JFrame implements Observer {
 		} 
 	}
 	
-	private void appendReceivedMessageToHistory(String message, String user, long timestamp) {		
-		String time = textFormatter.format(new Date(timestamp));		
+	private void appendReceivedMessageToHistory(String message, String user, long timestamp) {
+		String time = textFormatter.format(new Date(timestamp));
 		String newMessage = " " + time + " - [" + user + "]: " + message.trim() + "\n";
 		SimpleAttributeSet attrs = new SimpleAttributeSet();
 		StyleConstants.setBold(attrs, true);
@@ -331,8 +331,6 @@ public class JFrameMainWindow extends JFrame implements Observer {
 
 	@Override
 	public void update(Observable observable, Object object) {
-		
-		//TODO Update this method to process the request received from other users
 		
 		if (this.controller.isConnected()) {			
 			if (object.getClass().getName().equals(Message.class.getName())) {
@@ -383,6 +381,20 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				
 				else if (newString.equals("204")) {
 					JOptionPane.showMessageDialog(null, "Chat request error, the user does not exist", "Error", JOptionPane.ERROR_MESSAGE);					
+				}
+				
+				else if ((newString.substring(0, 3)).equals("300")) {
+					JOptionPane.showMessageDialog(null, "The user "+newString.substring(4)+" has closed the chat", "Chat closure", JOptionPane.INFORMATION_MESSAGE);					
+				}
+				
+				else if (newString.equals("666")) {
+					JOptionPane.showMessageDialog(null, "A fatal error has happened", "Error", JOptionPane.ERROR_MESSAGE);
+					this.dispose();
+				}
+				
+				else if (newString.equals("999")) {
+					JOptionPane.showMessageDialog(null, "The server is down, restart the program", "Error", JOptionPane.ERROR_MESSAGE);
+					this.dispose();
 				}
 			}
 		}
