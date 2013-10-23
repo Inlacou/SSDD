@@ -441,7 +441,7 @@ public class ChatClientController {
 			byte[] byteMsg = message.getBytes();
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
-			System.out.println("Sent to the server: " + message);
+			System.out.println("Sent to the server: " + message); 
 
 		} catch (SocketException e) {
 			System.err.println("# UDPClient Socket error: " + e.getMessage());
