@@ -86,7 +86,7 @@ public class ChatClientController {
 		this.serverPort = port;
 		restartMessagesArray();
 
-		String message = "000 INIT " + nick;
+		String message = "000 INIT " + nick; 
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
