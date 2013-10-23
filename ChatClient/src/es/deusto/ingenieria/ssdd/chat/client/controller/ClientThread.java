@@ -59,7 +59,7 @@ public class ClientThread implements Runnable {
 					controller.receiveChatRequest(nick);
 				}
 
-				else if ((message.substring(0, 3)).equals("212")) {
+				else if ((message.substring(0, 3)).equals("210")) {
 					String msg = message.substring(12, message.length());
 					controller.receiveMessage(msg);
 				}
