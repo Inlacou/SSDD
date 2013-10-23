@@ -38,20 +38,27 @@ public class Brain2 extends Thread {
 	}
 
 	public void receivedMessage(String text, String ip){
+		System.out.println("----- on brain2.receivedMessage() ----- text: " + text + " ip: " + ip);
 		MensajeReenviable msgr;
 		int numeroMensajes = mensajes.size();
 		for (int i = 0; i < numeroMensajes; i++) {
 			msgr = mensajes.get(i);
-			if(msgr.getIpRecepcion().equals(ip)){
+			System.out.println("----- " + msgr.getIpRecepcion());
+			System.out.println("----- " + msgr.getIpEnvio());
+			if(msgr.getIpEnvio().equals(ip)){
+				System.out.println("----- son la misma ip");
 				ArrayList<String> textos = msgr.getTextosRecepcion();
 				int numeroTextos = textos.size();
 				for (int j = 0; j < numeroTextos; j++) {
 					String texto = textos.get(i);
+					System.out.println("----- texto " + j + ": " + texto);
 					if(texto.trim().equals(text.trim())){
 						if(texto.equals("202 CHAT ACCEPTED")){
+							System.out.println("----- chat accepted -----");
 							sendMessage(texto, msgr.getIpRecepcion(), msgr.getPortRecepcion());
 							br.addChat(msgr.getIpEnvio(), msgr.getIpRecepcion());
 						}else if(texto.equals("203 CHAT REJECTED")){
+							System.out.println("----- chat rejected -----");
 							sendMessage(texto, msgr.getIpRecepcion(), msgr.getPortRecepcion());
 						}
 						textos.remove(i);

@@ -43,7 +43,7 @@ public class Mensaje {
 	
 	@Override
 	public String toString() {
-		return "Mensaje.toString() | Code: "+code+" MessageType: "+messageType+" Text: "+text;
+		return code+" "+messageType+" "+text;
 	}
 	
 	public static void main(String [] args){

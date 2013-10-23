@@ -23,13 +23,11 @@ public class Brain {
 	public Brain(Handler h){
 		handler = h;
 		users = new ArrayList<User>();
+		chats = new ArrayList<Chat>();
 		KeepAlive ka = new KeepAlive(60000, users, h.udpSocket);
 		ka.start();
 		brain2 = new Brain2(h.udpSocket, this, h);
 		brain2.start();
-		for (int i = 0; i < 1; i++) {
-			users.add(new User("nick"+i, "1.1.1."+i, 8000+i));
-		}
 	}
 
 	public void receivedMessage(String string, String ip, int messagePort){
@@ -78,6 +76,12 @@ public class Brain {
 				sendMessage("204 CHAT ERROR USER DOES NOT EXIST", ip, messagePort);
 			}
 			break;
+		case 202:
+			System.out.println("a");
+		case 203:
+			System.out.println("b");
+			brain2.receivedMessage(m.toString(), ip);
+			break;
 		case 210:
 			//received 210 SENDMSG text
 			try {
@@ -125,8 +129,18 @@ public class Brain {
 		User u = null;
 		int numeroChats = chats.size();
 		
+		
+		
 		for (int i = 0; i < numeroChats; i++) {
 			c = chats.get(i);
+			
+			System.out.println("+++++ i: " + i);
+			System.out.println("+++++ c: " + c);
+			System.out.println("+++++ cU1: " + c.getUser1());
+			System.out.println("+++++ cU2: " + c.getUser2());
+			System.out.println("+++++ cU1IP: " + c.getUser1().getIP());
+			System.out.println("+++++ cU2IP: " + c.getUser2().getIP());
+			
 			if(c.getUser1().getIP().equals(ip)){
 				u = c.getUser2();
 			}else if(c.getUser2().getIP().equals(ip)){
@@ -134,7 +148,7 @@ public class Brain {
 			}
 		}
 		
-		sendMessage(text, u.getIP(), u.getPort());
+		sendMessage("210 SENDMSG "+text, u.getIP(), u.getPort());
 		
 	}
 
@@ -166,7 +180,7 @@ public class Brain {
 			if(uAux.getIP().equals(ip1)){
 				u1 = uAux;
 			}else if(uAux.getIP().equals(ip2)){
-				u1 = uAux;
+				u2 = uAux;
 			}
 		}
 		chats.add(new Chat(u1, u2));
@@ -180,7 +194,7 @@ public class Brain {
 				destinationUser = users.get(i);
 			}
 		}
-		sendMessage("200 INITCHAT "+text, destinationUser.getIP(), destinationUser.getPort());
+		sendMessage("200 INITCHAT "+destinationUser.getNick(), destinationUser.getIP(), destinationUser.getPort());
 		sendMessage("201 CHAT OK", ip, port);
 		brain2.registerMessage("200 INITCHAT "+text, destinationUser.getIP(), destinationUser.getPort(), "202 CHAT ACCEPTED", "202 CHAT ACCEPTED", ip, port);
 	}
