@@ -311,7 +311,7 @@ public class ChatClientController {
 		msg.setText(message);
 		msg.setTimestamp(GregorianCalendar.getInstance().getTime().getTime());
 		msg.setTo(this.connectedUser);
-		System.out.println("Received chat message -> From: '"+msg.getFrom()+"', To: '"+msg.getTo()+"', Time: '"+msg.getTimestamp()+"', Text: '"+msg.getText()+"'");
+		System.out.println("Received chat message -> From: '"+msg.getFrom().getNick()+"', To: '"+msg.getTo().getNick()+"', Time: '"+msg.getTimestamp()+"', Text: '"+msg.getText()+"'");
 		this.observable.notifyObservers(msg);
 	}	
 
