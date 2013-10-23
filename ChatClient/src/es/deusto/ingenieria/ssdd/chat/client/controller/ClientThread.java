@@ -32,7 +32,6 @@ public class ClientThread implements Runnable {
 
 			try (DatagramSocket udpSocket = new DatagramSocket(portToListen)) {
 				
-				this.buffer = new byte[1024];
 				reply = new DatagramPacket(buffer, buffer.length);
 				System.out.println("Listening in the port " + portToListen);
 				udpSocket.receive(reply);
@@ -47,21 +46,25 @@ public class ClientThread implements Runnable {
 				
 				else if ((message.substring(0, 3)).equals("102")) {
 					String nick = message.substring(12, message.length());
+					nick = nick.trim();
 					controller.userConnected(nick);
 				}
 
 				else if ((message.substring(0, 3)).equals("103")) {
 					String nick = message.substring(13, message.length());
+					nick = nick.trim();
 					controller.userDisconnected(nick);
 				}
 				
 				else if ((message.substring(0, 3)).equals("200")) {
 					String nick = message.substring(13, message.length());
+					nick = nick.trim();
 					controller.receiveChatRequest(nick);
 				}
 
 				else if ((message.substring(0, 3)).equals("210")) {
 					String msg = message.substring(12, message.length());
+					msg = msg.trim();
 					controller.receiveMessage(msg);
 				}
 
