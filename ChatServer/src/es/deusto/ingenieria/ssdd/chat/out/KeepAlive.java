@@ -40,8 +40,16 @@ public class KeepAlive extends Thread {
 	}
 	
 	public void sendKeepAlive(User user) throws IOException{
-		DatagramPacket reply = new DatagramPacket("999 KEEPALIVE".getBytes(), "999 KEEPALIVE".getBytes().length, InetAddress.getByName(user.getIP()), user.getPort());
+		String ip = user.getIP();
+		String message = "999 KEEPALIVE";
+		int port = user.getPort();
+		System.out.println(" * Sending a message to '" + ip + "' Port: "+port+" -> " + message);
+		while(message.getBytes().length<1024){
+			message += " ";
+		}
+		DatagramPacket reply = new DatagramPacket(message.getBytes(), message.getBytes().length, InetAddress.getByName(ip), port);
 		udpSocket.send(reply);
+		System.out.println(" - Sent a message to '" + ip + "' Port: "+port+" -> " + new String(reply.getData()));
 	}
 	
 }
