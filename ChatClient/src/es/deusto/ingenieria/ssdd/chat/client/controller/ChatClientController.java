@@ -86,7 +86,8 @@ public class ChatClientController {
 		this.serverPort = port;
 		restartMessagesArray();
 
-		String message = "000 INIT " + nick; 
+		String message = "000 INIT " + nick;
+		message = cleanMessage(message);
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -94,7 +95,7 @@ public class ChatClientController {
 			DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 			udpSocket.send(request);
 			System.out.println("Sent to the server: " + message);
-			
+
 			byte[] buffer = new byte[1024];
 			DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
 
@@ -137,6 +138,7 @@ public class ChatClientController {
 		this.chatReceiver = null;
 
 		String message = "400 LEAVEAPP";
+		message = cleanMessage(message);
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -176,6 +178,7 @@ public class ChatClientController {
 		List<String> connectedUsers = new ArrayList<>();
 
 		String message = "100 LIST";
+		message = cleanMessage(message);
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -218,7 +221,7 @@ public class ChatClientController {
 		t.start();
 		d.setVisible(true);
 
-//		connectedUsers.add(connectedUser.getNick());
+		//		connectedUsers.add(connectedUser.getNick());
 
 		if (checkSubsequentMessages()) {
 
@@ -238,15 +241,17 @@ public class ChatClientController {
 		else {
 
 			message = "104 LISTERROR ";
-			
+
 			if (lastSubsequentMessage < 10)
 				message = message + "00" + lastSubsequentMessage;
-			
+
 			else if (lastSubsequentMessage < 100)
 				message = message + "0" + lastSubsequentMessage;
-			
+
 			else
 				message = message + lastSubsequentMessage;
+			
+			message = cleanMessage(message);
 
 			try (DatagramSocket udpSocket = new DatagramSocket()) {
 				InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -270,25 +275,25 @@ public class ChatClientController {
 
 		ArrayList<byte[]> messagesArray = this.splitMessageIntoByteArrays(str);
 
-			try (DatagramSocket udpSocket = new DatagramSocket()) {
-				InetAddress serverHost = InetAddress.getByName(serverIP);
-				
-				for (int i=0; i<messagesArray.size(); i++) {
-					
-					byte[] byteMsg = messagesArray.get(i);
-					DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
-					udpSocket.send(request);
-					System.out.println("Sent to the server: " + new String(byteMsg));
-				}
-				
-				return true;
+		try (DatagramSocket udpSocket = new DatagramSocket()) {
+			InetAddress serverHost = InetAddress.getByName(serverIP);
 
-			} catch (SocketException e) {
-				System.err.println("# UDPClient Socket error: " + e.getMessage());
-				e.printStackTrace();
-			} catch (IOException e) {
-				System.err.println("# UDPClient IO error: " + e.getMessage());
+			for (int i=0; i<messagesArray.size(); i++) {
+
+				byte[] byteMsg = messagesArray.get(i);
+				DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+				udpSocket.send(request);
+				System.out.println("Sent to the server: " + new String(byteMsg));
 			}
+
+			return true;
+
+		} catch (SocketException e) {
+			System.err.println("# UDPClient Socket error: " + e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("# UDPClient IO error: " + e.getMessage());
+		}
 
 		return false;
 	}
@@ -309,6 +314,7 @@ public class ChatClientController {
 		this.chatReceiver.setNick(to);
 
 		String message = "200 INITCHAT " + to;
+		message = cleanMessage(message);
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -370,6 +376,7 @@ public class ChatClientController {
 	public void acceptChatRequest() {
 
 		String message = "202 CHAT ACCEPTED";
+		message = cleanMessage(message);
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -390,6 +397,7 @@ public class ChatClientController {
 
 		String message = "203 CHAT REJECTED";
 		this.chatReceiver = null;
+		message = cleanMessage(message);
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -409,6 +417,7 @@ public class ChatClientController {
 	public boolean sendChatClosure() {
 
 		String message = "300 LEAVECHAT";
+		message = cleanMessage(message);
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -450,8 +459,9 @@ public class ChatClientController {
 		this.chatReceiver = null;
 
 		this.observable.notifyObservers(message);
-		
+
 		message = "301 LEAVECHAT OK";
+		message = cleanMessage(message);
 
 		try (DatagramSocket udpSocket = new DatagramSocket()) {
 			InetAddress serverHost = InetAddress.getByName(serverIP);			
@@ -505,9 +515,9 @@ public class ChatClientController {
 
 		return true;
 	}
-	
+
 	public ArrayList<byte[]> splitMessageIntoByteArrays(String str) {
-		
+
 		String head = "210 SENDMSG ";
 		String finalString = head + str;
 		byte[] array = finalString.getBytes();
@@ -540,14 +550,21 @@ public class ChatClientController {
 
 		return lastArray;
 	}
-	
+
 	public void notLoggedIn666Error () {
-		
+
 		this.observable.notifyObservers("666");
 	}
-	
+
 	public void serverIsDown() {
-		
+
 		this.observable.notifyObservers("999");
+	}
+
+	public String cleanMessage(String message) {
+		while(message.getBytes().length<1024){
+			message += " ";
+		}
+		return message;
 	}
 }
