@@ -345,12 +345,16 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				String newString = (String) object;
 				
 				if ((newString.substring(0, 3)).equals("102")) {
-					listModel.addElement(newString.substring(12, newString.length()));
+					newString = newString.substring(12, newString.length());
+					newString = newString.trim();
+					listModel.addElement(newString);
 					this.listUsers.setModel(listModel);
 				}
 				
 				else if ((newString.substring(0, 3)).equals("103")) {
-					listModel.addElement(newString.substring(13, newString.length()));
+					newString = newString.substring(13, newString.length());
+					newString = newString.trim();
+					listModel.addElement(newString);
 					this.listUsers.setModel(listModel);
 				}
 				
