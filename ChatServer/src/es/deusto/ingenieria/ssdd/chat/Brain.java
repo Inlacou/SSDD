@@ -25,14 +25,14 @@ public class Brain {
 		users = new ArrayList<User>();
 		KeepAlive ka = new KeepAlive(300000, users, h.udpSocket);
 		ka.start();
-		brain2 = new Brain2(h.udpSocket, h);
+		brain2 = new Brain2(h.udpSocket, this, h);
 		brain2.start();
 		for (int i = 0; i < 1; i++) {
 			users.add(new User("nick"+i, "1.1.1."+i, 8000+i));
 		}
 	}
 
-	public void receivedMessage(String string, String ip, int port){
+	public void receivedMessage(String string, String ip, int messagePort){
 		User u = null;
 		int numeroUsuarios = users.size();
 		for (int i = 0; i < numeroUsuarios; i++) {
@@ -46,14 +46,14 @@ public class Brain {
 		case 0:
 			//received 000 INIT nickname
 			try {
-				addUser(m.getText(), ip, port);
-				sendMessage("001 INIT OK "+port, ip, port);
+				addUser(m.getText(), ip, messagePort);
+				sendMessage("001 INIT OK "+messagePort, ip, messagePort);
 			} catch (IPAlreadyInUseException e) {
-				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip, port);
+				sendMessage("004 INIT ERROR IP ALREADY IN USE", ip, messagePort);
 			} catch (NickNameAlreadyInUseException e) {
-				sendMessage("002 INIT ERROR NICKNAME USED", ip, port);
+				sendMessage("002 INIT ERROR NICKNAME USED", ip, messagePort);
 			} catch (NickNameNotAllowedException e) {
-				sendMessage("003 INIT ERROR NICKNAME NOT ALLOWED", ip, port);
+				sendMessage("003 INIT ERROR NICKNAME NOT ALLOWED", ip, messagePort);
 			}
 			break;
 		case 100:
@@ -62,19 +62,19 @@ public class Brain {
 			break;
 		case 104:
 			//received 104 LISTERROR last_XXX_without_blanks
-			sendList(ip, port, m.getText());
+			sendList(ip, messagePort, m.getText());
 			break;
 		case 200:
 			//received 200 INITCHAT user
 			try {
 				userLoggedIn(ip);
 			} catch (NotLoggedInException e) {
-				sendMessage("666 ERROR NOT LOGGED IN", ip, port);
+				sendMessage("666 ERROR NOT LOGGED IN", ip, u.getPort());
 			}
 			try{
-				initChat(m.getText(), ip, port);
+				initChat(m.getText(), ip, messagePort);
 			}catch (NullPointerException e) {
-				sendMessage("204 CHAT ERROR USER DOES NOT EXIST", ip, port);
+				sendMessage("204 CHAT ERROR USER DOES NOT EXIST", ip, messagePort);
 			}
 			break;
 		case 210:
@@ -82,19 +82,19 @@ public class Brain {
 			try {
 				userLoggedIn(ip);
 			} catch (NotLoggedInException e) {
-				sendMessage("666 ERROR NOT LOGGED IN", ip, port);
+				sendMessage("666 ERROR NOT LOGGED IN", ip, u.getPort());
 			}
-			//TODO
+			enviarMensaje(m.getText(), ip);
 			break;
 		case 300:
 			//300 LEAVECHAT
 			try {
 				userLoggedIn(ip);
 			} catch (NotLoggedInException e) {
-				sendMessage("666 ERROR NOT LOGGED IN", ip, port);
+				sendMessage("666 ERROR NOT LOGGED IN", ip, u.getPort());
 			}
-			sendMessage("301 LEAVECHAT OK", ip, port);
-			leaveChat(ip, port);
+			sendMessage("301 LEAVECHAT OK", ip, messagePort);
+			leaveChat(ip, messagePort);
 			break;
 		case 301:
 			//301 LEAVECHAT OK
@@ -102,7 +102,7 @@ public class Brain {
 			try {
 				userLoggedIn(ip);
 			} catch (NotLoggedInException e) {
-				sendMessage("666 ERROR NOT LOGGED IN", ip, port);
+				sendMessage("666 ERROR NOT LOGGED IN", ip, u.getPort());
 			}
 			break;
 		case 400:
@@ -110,13 +110,31 @@ public class Brain {
 			try {
 				userLoggedIn(ip);
 			} catch (NotLoggedInException e) {
-				sendMessage("666 ERROR NOT LOGGED IN", ip, port);
+				sendMessage("666 ERROR NOT LOGGED IN", ip, u.getPort());
 			}
-			leaveApp(m.getText(), ip, port);
+			leaveApp(m.getText(), ip, messagePort);
 			break;
 		default:
 			break;
 		}
+	}
+
+	private void enviarMensaje(String text, String ip) {
+		Chat c = null;
+		User u = null;
+		int numeroChats = chats.size();
+		
+		for (int i = 0; i < numeroChats; i++) {
+			c = chats.get(i);
+			if(c.getUser1().getIP().equals(ip)){
+				u = c.getUser2();
+			}else if(c.getUser2().getIP().equals(ip)){
+				u = c.getUser1();
+			}
+		}
+		
+		sendMessage(text, u.getIP(), u.getPort());
+		
 	}
 
 	private void leaveChat(String ip, int port) {
@@ -135,6 +153,22 @@ public class Brain {
 		}
 		sendMessage("300 LEAVECHAT", u.getIP(), u.getPort());
 		brain2.registerMessage("300 LEAVECHAT", u.getIP(), u.getPort(), "301 LEAVECHAT OK", ip, port);
+	}
+
+	public void addChat(String ip1, String ip2){
+		User u1 = null;
+		User u2 = null;
+		User uAux;
+		int numeroUsuarios = users.size();
+		for (int i = 0; i < numeroUsuarios; i++) {
+			uAux = users.get(i);
+			if(uAux.getIP().equals(ip1)){
+				u1 = uAux;
+			}else if(uAux.getIP().equals(ip2)){
+				u1 = uAux;
+			}
+		}
+		chats.add(new Chat(u1, u2));
 	}
 
 	private void initChat(String text, String ip, int port){

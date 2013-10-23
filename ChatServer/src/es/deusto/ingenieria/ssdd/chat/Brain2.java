@@ -13,11 +13,13 @@ public class Brain2 extends Thread {
 	DatagramSocket udpSocket;
 	byte[] buffer;
 	Handler handler;
+	Brain br;
 
-	public Brain2(DatagramSocket udpSocket, Handler h) {
+	public Brain2(DatagramSocket udpSocket, Brain br, Handler h) {
 		handler = h;
 		this.udpSocket = udpSocket;
 		mensajes = new ArrayList<MensajeReenviable>();
+		this.br = br;
 	}
 
 	@Override
@@ -40,13 +42,16 @@ public class Brain2 extends Thread {
 		int numeroMensajes = mensajes.size();
 		for (int i = 0; i < numeroMensajes; i++) {
 			msgr = mensajes.get(i);
-			if(msgr.getIpEnvio().equals(ip)){
+			if(msgr.getIpRecepcion().equals(ip)){
 				ArrayList<String> textos = msgr.getTextosRecepcion();
 				int numeroTextos = textos.size();
 				for (int j = 0; j < numeroTextos; j++) {
 					String texto = textos.get(i);
 					if(texto.trim().equals(text.trim())){
-						if(texto.equals("202 CHAT ACCEPTED") || texto.equals("203 CHAT REJECTED")){
+						if(texto.equals("202 CHAT ACCEPTED")){
+							sendMessage(texto, msgr.getIpRecepcion(), msgr.getPortRecepcion());
+							br.addChat(msgr.getIpEnvio(), msgr.getIpRecepcion());
+						}else if(texto.equals("203 CHAT REJECTED")){
 							sendMessage(texto, msgr.getIpRecepcion(), msgr.getPortRecepcion());
 						}
 						textos.remove(i);
