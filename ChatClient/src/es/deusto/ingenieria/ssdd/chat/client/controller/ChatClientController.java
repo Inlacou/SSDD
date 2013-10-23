@@ -250,7 +250,7 @@ public class ChatClientController {
 
 			else
 				message = message + lastSubsequentMessage;
-			
+
 			message = cleanMessage(message);
 
 			try (DatagramSocket udpSocket = new DatagramSocket()) {
@@ -273,29 +273,32 @@ public class ChatClientController {
 
 	public boolean sendMessage(String str) {
 
-		ArrayList<byte[]> messagesArray = this.splitMessageIntoByteArrays(str);
+		if (chatReceiver != null) {
 
-		try (DatagramSocket udpSocket = new DatagramSocket()) {
-			InetAddress serverHost = InetAddress.getByName(serverIP);
+			ArrayList<byte[]> messagesArray = this.splitMessageIntoByteArrays(str);
 
-			for (int i=0; i<messagesArray.size(); i++) {
+			try (DatagramSocket udpSocket = new DatagramSocket()) {
+				InetAddress serverHost = InetAddress.getByName(serverIP);
 
-				byte[] byteMsg = messagesArray.get(i);
-				String s = new String(byteMsg);
-				s = cleanMessage(s);
-				byteMsg = s.getBytes();
-				DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
-				udpSocket.send(request);
-				System.out.println("Sent to the server: " + new String(byteMsg));
+				for (int i=0; i<messagesArray.size(); i++) {
+
+					byte[] byteMsg = messagesArray.get(i);
+					String s = new String(byteMsg);
+					s = cleanMessage(s);
+					byteMsg = s.getBytes();
+					DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
+					udpSocket.send(request);
+					System.out.println("Sent to the server: " + new String(byteMsg));
+				}
+
+				return true;
+
+			} catch (SocketException e) {
+				System.err.println("# UDPClient Socket error: " + e.getMessage());
+				e.printStackTrace();
+			} catch (IOException e) {
+				System.err.println("# UDPClient IO error: " + e.getMessage());
 			}
-
-			return true;
-
-		} catch (SocketException e) {
-			System.err.println("# UDPClient Socket error: " + e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.err.println("# UDPClient IO error: " + e.getMessage());
 		}
 
 		return false;
@@ -490,6 +493,11 @@ public class ChatClientController {
 	public void userDisconnected(String userNick) {
 
 		this.observable.notifyObservers("103 LEFTUSER " + userNick);
+		
+		if (chatReceiver != null) {
+			if (chatReceiver.getNick().equals(userNick))
+				chatReceiver = null;
+		}
 	}
 
 	public void addMessageToArray(String message) {

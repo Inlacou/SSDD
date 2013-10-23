@@ -388,7 +388,8 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				}
 				
 				else if ((newString.substring(0, 3)).equals("300")) {
-					JOptionPane.showMessageDialog(null, "The user "+newString.substring(4)+" has closed the chat", "Chat closure", JOptionPane.INFORMATION_MESSAGE);					
+					JOptionPane.showMessageDialog(null, "The user "+newString.substring(4)+" has closed the chat", "Chat closure", JOptionPane.INFORMATION_MESSAGE);	
+					//TODO
 				}
 				
 				else if (newString.equals("666")) {
