@@ -199,14 +199,14 @@ public class ChatClientController {
 		JPanel p1 = new JPanel(new GridBagLayout());
 		p1.add(new JLabel("Loading users online..."), new GridBagConstraints());
 		d.getContentPane().add(p1);
-		d.setSize(100,100);
+		d.setSize(120,100);
 		d.setLocationRelativeTo(f);
 		d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		d.setModal(true);
 		Thread t = new Thread() {
 			public void run() {
 				try {
-					Thread.sleep(3000);
+					Thread.sleep(1500);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -281,6 +281,9 @@ public class ChatClientController {
 			for (int i=0; i<messagesArray.size(); i++) {
 
 				byte[] byteMsg = messagesArray.get(i);
+				String s = new String(byteMsg);
+				s = cleanMessage(s);
+				byteMsg = s.getBytes();
 				DatagramPacket request = new DatagramPacket(byteMsg, byteMsg.length, serverHost, serverPort);
 				udpSocket.send(request);
 				System.out.println("Sent to the server: " + new String(byteMsg));
@@ -305,6 +308,7 @@ public class ChatClientController {
 		msg.setText(message);
 		msg.setTimestamp(GregorianCalendar.getInstance().getTime().getTime());
 		msg.setTo(this.connectedUser);
+		System.out.println("Received chat message -> From: '"+msg.getFrom()+"', To: '"+msg.getTo()+"', Time: '"+msg.getTimestamp()+"', Text: '"+msg.getText()+"'");
 		this.observable.notifyObservers(msg);
 	}	
 
