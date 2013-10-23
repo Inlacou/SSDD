@@ -354,7 +354,7 @@ public class JFrameMainWindow extends JFrame implements Observer {
 				else if ((newString.substring(0, 3)).equals("103")) {
 					newString = newString.substring(13, newString.length());
 					newString = newString.trim();
-					listModel.addElement(newString);
+					listModel.removeElement(newString);
 					this.listUsers.setModel(listModel);
 				}
 				
